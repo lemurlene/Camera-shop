@@ -73,10 +73,12 @@
     </div>
     <div class="wrapper">
       <header class="header" id="header">
-        <div class="container"><a class="header__logo" href="index.html" aria-label="Переход на главную">
+        <div class="container">
+          <a class="header__logo" href="index.html" aria-label="Переход на главную">
             <svg width="100" height="36" aria-hidden="true">
               <use xlink:href="#icon-logo"></use>
-            </svg></a>
+            </svg>
+          </a>
           <nav class="main-nav header__main-nav">
             <ul class="main-nav__list">
               <li class="main-nav__item"><a class="main-nav__link" href="catalog.html">Каталог</a>
@@ -110,7 +112,8 @@
                 <use xlink:href="#icon-close"></use>
               </svg><span class="visually-hidden">Сбросить поиск</span>
             </button>
-          </div><a class="header__basket-link" href="#">
+          </div>
+          <a class="header__basket-link" href="#">
             <svg width="16" height="16" aria-hidden="true">
               <use xlink:href="#icon-basket"></use>
             </svg></a>
@@ -121,7 +124,14 @@
           <picture>
             <source type="image/webp" srcset="img/content/banner-bg.webp, img/content/banner-bg@2x.webp 2x"><img src="img/content/banner-bg.jpg" srcset="img/content/banner-bg@2x.jpg 2x" width="1280" height="280" alt="баннер">
           </picture>
-          <p class="banner__info"><span class="banner__message">Новинка!</span><span class="title title--h1">Cannonball&nbsp;Pro&nbsp;MX&nbsp;8i</span><span class="banner__text">Профессиональная камера от&nbsp;известного производителя</span><a class="btn" href="#">Подробнее</a></p>
+          <p class="banner__info">
+            <span class="banner__message">Новинка!</span>
+            <span class="title title--h1">Cannonball&nbsp;Pro&nbsp;MX&nbsp;8i</span>
+            <span class="banner__text">Профессиональная камера от&nbsp;известного производителя
+
+            </span>
+            <a class="btn" href="#">Подробнее</a>
+          </p>
         </div>
         <div class="page-content">
           <div class="breadcrumbs">
@@ -146,7 +156,7 @@
                     <form action="#">
                       <h2 class="visually-hidden">Фильтр</h2>
                       <fieldset class="catalog-filter__block">
-                        <legend class="title title--h5">Цена, ₽</legend>
+                        <legend class="title title&#45;&#45;h5">Цена, ₽</legend>
                         <div class="catalog-filter__price-range">
                           <div class="custom-input">
                             <label>
@@ -161,20 +171,20 @@
                         </div>
                       </fieldset>
                       <fieldset class="catalog-filter__block">
-                        <legend class="title title--h5">Категория</legend>
-                        <div class="custom-checkbox catalog-filter__item">
+                        <legend class="title title&#45;&#45;h5">Категория</legend>
+                        <div class="custom-radio catalog-filter__item">
                           <label>
-                            <input type="checkbox" name="photocamera" checked><span class="custom-checkbox__icon"></span><span class="custom-checkbox__label">Фотокамера</span>
+                            <input type="radio" name="category" value="photocamera" checked><span class="custom-radio__icon"></span><span class="custom-radio__label">Фотокамера</span>
                           </label>
                         </div>
-                        <div class="custom-checkbox catalog-filter__item">
+                        <div class="custom-radio catalog-filter__item">
                           <label>
-                            <input type="checkbox" name="videocamera"><span class="custom-checkbox__icon"></span><span class="custom-checkbox__label">Видеокамера</span>
+                            <input type="radio" name="category" value="videocamera"><span class="custom-radio__icon"></span><span class="custom-radio__label">Видеокамера</span>
                           </label>
                         </div>
                       </fieldset>
                       <fieldset class="catalog-filter__block">
-                        <legend class="title title--h5">Тип камеры</legend>
+                        <legend class="title title&#45;&#45;h5">Тип камеры</legend>
                         <div class="custom-checkbox catalog-filter__item">
                           <label>
                             <input type="checkbox" name="digital" checked><span class="custom-checkbox__icon"></span><span class="custom-checkbox__label">Цифровая</span>
@@ -197,7 +207,7 @@
                         </div>
                       </fieldset>
                       <fieldset class="catalog-filter__block">
-                        <legend class="title title--h5">Уровень</legend>
+                        <legend class="title title&#45;&#45;h5">Уровень</legend>
                         <div class="custom-checkbox catalog-filter__item">
                           <label>
                             <input type="checkbox" name="zero" checked><span class="custom-checkbox__icon"></span><span class="custom-checkbox__label">Нулевой</span>
@@ -223,7 +233,7 @@
                   <div class="catalog-sort">
                     <form action="#">
                       <div class="catalog-sort__inner">
-                        <p class="title title--h5">Сортировать:</p>
+                        <p class="title title&#45;&#45;h5">Сортировать:</p>
                         <div class="catalog-sort__type">
                           <div class="catalog-sort__btn-text">
                             <input type="radio" id="sortPrice" name="sort" checked>
@@ -235,7 +245,7 @@
                           </div>
                         </div>
                         <div class="catalog-sort__order">
-                          <div class="catalog-sort__btn catalog-sort__btn--up">
+                          <div class="catalog-sort__btn catalog-sort__btn&#45;&#45;up">
                             <input type="radio" id="up" name="sort-icon" checked aria-label="По возрастанию">
                             <label for="up">
                               <svg width="16" height="14" aria-hidden="true">
@@ -243,7 +253,7 @@
                               </svg>
                             </label>
                           </div>
-                          <div class="catalog-sort__btn catalog-sort__btn--down">
+                          <div class="catalog-sort__btn catalog-sort__btn&#45;&#45;down">
                             <input type="radio" id="down" name="sort-icon" aria-label="По убыванию">
                             <label for="down">
                               <svg width="16" height="14" aria-hidden="true">
@@ -259,11 +269,18 @@
                     <div class="product-card">
                       <div class="product-card__img">
                         <picture>
-                          <source type="image/webp" srcset="img/content/das-auge.webp, img/content/das-auge@2x.webp 2x"><img src="img/content/das-auge.jpg" srcset="img/content/das-auge@2x.jpg 2x" width="280" height="240" alt="Ретрокамера «Das Auge IV»">
+                          <source type="image/webp"
+                          srcset="img/content/das-auge.webp,
+                          img/content/das-auge@2x.webp 2x">
+                          <img src="img/content/das-auge.jpg"
+                          srcset="img/content/das-auge@2x.jpg 2x"
+                          width="280" height="240"
+                          alt="Ретрокамера «Das Auge IV»">
                         </picture>
                       </div>
                       <div class="product-card__info">
                         <div class="rate product-card__rate">
+
                           <svg width="17" height="16" aria-hidden="true">
                             <use xlink:href="#icon-full-star"></use>
                           </svg>
@@ -282,7 +299,7 @@
                           <p class="visually-hidden">Рейтинг: 3</p>
                           <p class="rate__count"><span class="visually-hidden">Всего оценок:</span>23</p>
                         </div>
-                        <p class="product-card__title">Ретрокамера Das Auge IV</p>
+                        <p class="product-card__title">Ретрокамера «Das Auge IV»</p>
                         <p class="product-card__price"><span class="visually-hidden">Цена:</span>73 450 ₽
                         </p>
                       </div>
@@ -470,7 +487,7 @@
                           <p class="visually-hidden">Рейтинг: 3</p>
                           <p class="rate__count"><span class="visually-hidden">Всего оценок:</span>23</p>
                         </div>
-                        <p class="product-card__title">Ретрокамера Das Auge IV</p>
+                        <p class="product-card__title">Ретрокамера «Das Auge IV»</p>
                         <p class="product-card__price"><span class="visually-hidden">Цена:</span>73 450 ₽
                         </p>
                       </div>
@@ -544,7 +561,7 @@
                           <p class="visually-hidden">Рейтинг: 3</p>
                           <p class="rate__count"><span class="visually-hidden">Всего оценок:</span>23</p>
                         </div>
-                        <p class="product-card__title">Ретрокамера Das Auge IV</p>
+                        <p class="product-card__title">Ретрокамера «Das Auge IV»</p>
                         <p class="product-card__price"><span class="visually-hidden">Цена:</span>73 450 ₽
                         </p>
                       </div>
@@ -595,13 +612,13 @@
                   </div>
                   <div class="pagination">
                     <ul class="pagination__list">
-                      <li class="pagination__item"><a class="pagination__link pagination__link--active" href="1">1</a>
+                      <li class="pagination__item"><a class="pagination__link pagination__link&#45;&#45;active" href="1">1</a>
                       </li>
                       <li class="pagination__item"><a class="pagination__link" href="2">2</a>
                       </li>
                       <li class="pagination__item"><a class="pagination__link" href="3">3</a>
                       </li>
-                      <li class="pagination__item"><a class="pagination__link pagination__link--text" href="2">Далее</a>
+                      <li class="pagination__item"><a class="pagination__link pagination__link&#45;&#45;text" href="2">Далее</a>
                       </li>
                     </ul>
                   </div>
