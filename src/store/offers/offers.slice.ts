@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction, } from '@reduxjs/toolkit';
+import { adaptOffersToClient } from '../../adapters';
 import { initialState } from './const';
 import { NameSpace } from '../const';
 import { fetchOffers } from '../api-action';
@@ -21,7 +22,7 @@ export const offersSlice = createSlice({
         state.isErrorConnectionOffers = true;
       })
       .addCase(fetchOffers.fulfilled, (state, action) => {
-        state.offers = action.payload;
+        state.offers = adaptOffersToClient(action.payload);
         state.isLoadingOffers = false;
         state.isErrorConnectionOffers = false;
       });

@@ -19,7 +19,7 @@ export const RouteNames = {
 } as const;
 
 export const Categories = {
-  photocamera: 'Фотоаппарат',
+  photocamera: 'Фотокамера',
   videocamera: 'Видеокамера',
 } as const;
 
@@ -37,7 +37,7 @@ export const Types = {
 } as const;
 
 export const CategoryToKey = {
-  'Фотоаппарат': 'photocamera',
+  'Фотокамера': 'photocamera',
   'Видеокамера': 'videocamera',
 } as const;
 

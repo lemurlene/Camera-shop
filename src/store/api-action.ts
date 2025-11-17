@@ -1,4 +1,4 @@
-import { FullOfferType, FullOfferType, OfferPromoType } from '../const/type';
+import { FullOfferType, OfferPromoType } from '../const/type';
 import { APIRoute } from '../const/enum';
 import { NameSpace } from './const';
 import { createAppAsyncThunk } from '../hooks';

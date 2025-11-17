@@ -1,5 +1,5 @@
 import { useMemo, useEffect } from 'react';
-import { useAppSelector, useFilteredProducts, usePagination } from '../../hooks';
+import { useAppSelector, useFilteredProducts, usePagination, usePriceSync } from '../../hooks';
 import { selectOffersPromo } from '../../store/offers-promo/offers-promo.selector';
 import BannerPromo from '../../components/banner-promo';
 import Breadcrumbs from '../../components/breadcrumbs';
@@ -16,6 +16,7 @@ function MainPageContent(): JSX.Element {
   const { filteredProducts, filteredPriceRange } = useFilteredProducts();
   const offersPromo = useAppSelector(selectOffersPromo);
   const { setParam } = useUrl();
+  usePriceSync();
 
   const {
     currentPage,

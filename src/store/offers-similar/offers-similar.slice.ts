@@ -2,6 +2,7 @@ import { createSlice, PayloadAction, } from '@reduxjs/toolkit';
 import { initialState } from './const';
 import { NameSpace } from '../const';
 import { fetchOffersSimilar } from '../api-action';
+import { adaptOffersToClient } from '../../adapters';
 
 export const offersSimilarSlice = createSlice({
   name: NameSpace.OffersSimilar,
@@ -21,7 +22,7 @@ export const offersSimilarSlice = createSlice({
       })
       .addCase(fetchOffersSimilar.fulfilled, (state, action) => {
         if (action.payload) {
-          state.offersSimilar = action.payload;
+          state.offersSimilar = adaptOffersToClient(action.payload);
         }
         state.isLoadingOffersSimilar = false;
       });

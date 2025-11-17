@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { initialState } from './const';
 import { NameSpace } from '../const';
 import { getOfferInfoById } from '../api-action';
+import { adaptOfferToClient } from '../../adapters';
 
 export const offerSlice = createSlice({
   name: NameSpace.Offer,
@@ -22,7 +23,7 @@ export const offerSlice = createSlice({
       })
       .addCase(getOfferInfoById.fulfilled, (state, action) => {
         if (action.payload) {
-          state.offer = action.payload;
+          state.offer = adaptOfferToClient(action.payload);
         }
         state.isLoadingOffer = false;
       });

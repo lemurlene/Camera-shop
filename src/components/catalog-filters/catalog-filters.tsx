@@ -1,4 +1,4 @@
-import { memo, useCallback, useState, useEffect, ChangeEvent } from 'react';
+import { memo, useCallback, useState, useEffect, ChangeEvent, KeyboardEvent, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import {
   changeCategory,
@@ -27,7 +27,7 @@ interface CatalogFiltersProps {
   };
 }
 
-const СatalogFilters = ({ priceRange }: CatalogFiltersProps): JSX.Element => {
+const CatalogFilters = ({ priceRange }: CatalogFiltersProps): JSX.Element => {
   const dispatch = useAppDispatch();
 
   const currentCategory = useAppSelector(selectCurrentCategory);
@@ -39,72 +39,120 @@ const СatalogFilters = ({ priceRange }: CatalogFiltersProps): JSX.Element => {
   const [localMinPrice, setLocalMinPrice] = useState<string>('');
   const [localMaxPrice, setLocalMaxPrice] = useState<string>('');
 
+  const resetButtonRef = useRef<HTMLButtonElement>(null);
+
+  const handleReset = useCallback(() => {
+    dispatch(resetFilters());
+    setLocalMinPrice('');
+    setLocalMaxPrice('');
+  }, [dispatch]);
+
   const handleCategoryChange = useCallback((categoryKey: keyof typeof Categories) => {
     dispatch(changeCategory(categoryKey === currentCategory ? null : categoryKey));
   }, [dispatch, currentCategory]);
+
+  const handleCategoryKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement>, categoryKey: keyof typeof Categories) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleCategoryChange(categoryKey);
+    }
+  }, [handleCategoryChange]);
 
   const handleTypeChange = useCallback((typeKey: keyof typeof Types) => {
     dispatch(changeType(typeKey));
   }, [dispatch]);
 
+  const handleTypeKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement>, typeKey: keyof typeof Types) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleTypeChange(typeKey);
+    }
+  }, [handleTypeChange]);
+
   const handleLevelChange = useCallback((levelKey: keyof typeof Levels) => {
     dispatch(changeLevel(levelKey));
   }, [dispatch]);
 
+  const handleLevelKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement>, levelKey: keyof typeof Levels) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleLevelChange(levelKey);
+    }
+  }, [handleLevelChange]);
+
+  const handleResetKeyDown = useCallback((e: KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleReset();
+    }
+  }, [handleReset]);
+
   const handleMinPriceChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setLocalMinPrice(value);
-    const numValue = value === '' ? null : Math.max(0, parseInt(value, 10) || 0);
-    dispatch(changeMinPrice(numValue));
-  }, [dispatch]);
+    setLocalMinPrice(e.target.value);
+  }, []);
 
   const handleMaxPriceChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setLocalMaxPrice(value);
-    const numValue = value === '' ? null : Math.max(0, parseInt(value, 10) || 0);
-    dispatch(changeMaxPrice(numValue));
-  }, [dispatch]);
+    setLocalMaxPrice(e.target.value);
+  }, []);
 
-  const handleMinPriceBlur = useCallback(() => {
-    if (localMinPrice === '') {
-      return;
+  const handleMinPriceKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.currentTarget.blur();
     }
+  }, []);
 
-    let numValue = parseInt(localMinPrice, 10);
-    if (isNaN(numValue)) {
-      setLocalMinPrice('');
+  const handleMaxPriceKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.currentTarget.blur();
+    }
+  }, []);
+
+  const applyMinPrice = useCallback(() => {
+    if (localMinPrice === '') {
       dispatch(changeMinPrice(null));
       return;
     }
 
+    let numValue = parseInt(localMinPrice, 10);
+
+    if (isNaN(numValue) || numValue < 0) {
+      setLocalMinPrice('');
+      dispatch(changeMinPrice(null));
+      return;
+    }
     if (numValue < priceRange.min) {
       numValue = priceRange.min;
-    } else if (numValue > priceRange.max) {
+    }
+    if (numValue > priceRange.max) {
       numValue = priceRange.max;
+    }
+    if (maxPrice !== null && numValue > maxPrice) {
+      numValue = maxPrice;
     }
 
     setLocalMinPrice(numValue.toString());
     dispatch(changeMinPrice(numValue));
-  }, [localMinPrice, priceRange, dispatch]);
+  }, [localMinPrice, priceRange, maxPrice, dispatch]);
 
-  const handleMaxPriceBlur = useCallback(() => {
+  const applyMaxPrice = useCallback(() => {
     if (localMaxPrice === '') {
-      return;
-    }
-
-    let numValue = parseInt(localMaxPrice, 10);
-    if (isNaN(numValue)) {
-      setLocalMaxPrice('');
       dispatch(changeMaxPrice(null));
       return;
     }
 
-    if (numValue > priceRange.max) {
-      numValue = priceRange.max;
-    } else if (numValue < priceRange.min) {
+    let numValue = parseInt(localMaxPrice, 10);
+
+    if (isNaN(numValue) || numValue < 0) {
+      setLocalMaxPrice('');
+      dispatch(changeMaxPrice(null));
+      return;
+    }
+    if (numValue < priceRange.min) {
       numValue = priceRange.min;
     }
-
+    if (numValue > priceRange.max) {
+      numValue = priceRange.max;
+    }
     if (minPrice !== null && numValue < minPrice) {
       numValue = minPrice;
     }
@@ -113,11 +161,13 @@ const СatalogFilters = ({ priceRange }: CatalogFiltersProps): JSX.Element => {
     dispatch(changeMaxPrice(numValue));
   }, [localMaxPrice, priceRange, minPrice, dispatch]);
 
-  const handleReset = useCallback(() => {
-    dispatch(resetFilters());
-    setLocalMinPrice('');
-    setLocalMaxPrice('');
-  }, [dispatch]);
+  const handleMinPriceBlur = useCallback(() => {
+    applyMinPrice();
+  }, [applyMinPrice]);
+
+  const handleMaxPriceBlur = useCallback(() => {
+    applyMaxPrice();
+  }, [applyMaxPrice]);
 
   useEffect(() => {
     setLocalMinPrice(minPrice !== null ? minPrice.toString() : '');
@@ -126,6 +176,16 @@ const СatalogFilters = ({ priceRange }: CatalogFiltersProps): JSX.Element => {
   useEffect(() => {
     setLocalMaxPrice(maxPrice !== null ? maxPrice.toString() : '');
   }, [maxPrice]);
+
+  useEffect(() => {
+    if (minPrice !== null && minPrice < priceRange.min) {
+      dispatch(changeMinPrice(priceRange.min));
+    }
+
+    if (maxPrice !== null && maxPrice > priceRange.max) {
+      dispatch(changeMaxPrice(priceRange.max));
+    }
+  }, [priceRange.min, priceRange.max, minPrice, maxPrice, dispatch]);
 
   const hasActiveFilters = currentCategory !== null ||
     currentType.length > 0 ||
@@ -158,7 +218,9 @@ const СatalogFilters = ({ priceRange }: CatalogFiltersProps): JSX.Element => {
                   value={localMinPrice}
                   onChange={handleMinPriceChange}
                   onBlur={handleMinPriceBlur}
+                  onKeyDown={handleMinPriceKeyDown}
                   min={0}
+                  aria-label="Минимальная цена"
                 />
               </label>
             </div>
@@ -171,13 +233,14 @@ const СatalogFilters = ({ priceRange }: CatalogFiltersProps): JSX.Element => {
                   value={localMaxPrice}
                   onChange={handleMaxPriceChange}
                   onBlur={handleMaxPriceBlur}
+                  onKeyDown={handleMaxPriceKeyDown}
                   min={0}
+                  aria-label="Максимальная цена"
                 />
               </label>
             </div>
           </div>
         </fieldset>
-
         <fieldset className="catalog-filter__block">
           <legend className="title title--h5">Категория</legend>
           {CATEGORY_KEYS.map((categoryKey) => (
@@ -188,6 +251,9 @@ const СatalogFilters = ({ priceRange }: CatalogFiltersProps): JSX.Element => {
                   name="category"
                   checked={currentCategory === categoryKey}
                   onChange={() => handleCategoryChange(categoryKey)}
+                  onKeyDown={(e) => handleCategoryKeyDown(e, categoryKey)}
+                  aria-checked={currentCategory === categoryKey}
+                  tabIndex={0}
                 />
                 <span className="custom-radio__icon"></span>
                 <span className="custom-radio__label">
@@ -197,7 +263,6 @@ const СatalogFilters = ({ priceRange }: CatalogFiltersProps): JSX.Element => {
             </div>
           ))}
         </fieldset>
-
         <fieldset className="catalog-filter__block">
           <legend className="title title--h5">Тип камеры</legend>
           {TYPE_KEYS.map((typeKey) => (
@@ -208,7 +273,11 @@ const СatalogFilters = ({ priceRange }: CatalogFiltersProps): JSX.Element => {
                   name="type"
                   checked={isTypeChecked(typeKey)}
                   onChange={() => handleTypeChange(typeKey)}
+                  onKeyDown={(e) => handleTypeKeyDown(e, typeKey)}
                   disabled={isTypeDisabled(typeKey)}
+                  aria-checked={isTypeChecked(typeKey)}
+                  aria-disabled={isTypeDisabled(typeKey)}
+                  tabIndex={0}
                 />
                 <span className="custom-checkbox__icon"></span>
                 <span className="custom-checkbox__label">
@@ -218,7 +287,6 @@ const СatalogFilters = ({ priceRange }: CatalogFiltersProps): JSX.Element => {
             </div>
           ))}
         </fieldset>
-
         <fieldset className="catalog-filter__block">
           <legend className="title title--h5">Уровень</legend>
           {LEVEL_KEYS.map((levelKey) => (
@@ -229,6 +297,9 @@ const СatalogFilters = ({ priceRange }: CatalogFiltersProps): JSX.Element => {
                   name="level"
                   checked={isLevelChecked(levelKey)}
                   onChange={() => handleLevelChange(levelKey)}
+                  onKeyDown={(e) => handleLevelKeyDown(e, levelKey)}
+                  aria-checked={isLevelChecked(levelKey)}
+                  tabIndex={0}
                 />
                 <span className="custom-checkbox__icon"></span>
                 <span className="custom-checkbox__label">
@@ -238,12 +309,15 @@ const СatalogFilters = ({ priceRange }: CatalogFiltersProps): JSX.Element => {
             </div>
           ))}
         </fieldset>
-
         <button
+          ref={resetButtonRef}
           className="btn catalog-filter__reset-btn"
           type="reset"
           onClick={handleReset}
+          onKeyDown={handleResetKeyDown}
           disabled={!hasActiveFilters}
+          aria-disabled={!hasActiveFilters}
+          tabIndex={0}
         >
           Сбросить фильтры
         </button>
@@ -252,6 +326,6 @@ const СatalogFilters = ({ priceRange }: CatalogFiltersProps): JSX.Element => {
   );
 };
 
-const СatalogFiltersMemo = memo(СatalogFilters);
+const CatalogFiltersMemo = memo(CatalogFilters);
 
-export default СatalogFiltersMemo;
+export default CatalogFiltersMemo;
