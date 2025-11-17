@@ -1,30 +1,38 @@
 import { memo, useMemo } from 'react';
 import cn from 'classnames';
 import { ButtonBuyConfig } from './const';
+import { useModal } from '../../../contexts';
+import { FullOfferType } from '../../../const/type';
 
 type ButtonBuyProps = {
-  isOffer?: boolean;
+  isInCart?: boolean;
+  product: FullOfferType;
 }
 
-function ButtonBuy({ isOffer = false }: ButtonBuyProps): JSX.Element {
+function ButtonBuy({ isInCart = false, product }: ButtonBuyProps): JSX.Element {
 
   const { buttonClass, buttonText, buttonIcon } = useMemo(() => (
-    isOffer ? ButtonBuyConfig.Offer : ButtonBuyConfig.Card
-  ), [isOffer]);
+    isInCart ? ButtonBuyConfig.InCart : ButtonBuyConfig.Buy
+  ), [isInCart]);
 
   const buttonClasses = cn(
-    'btn btn--purple',
-    {
-      [buttonClass]: !isOffer && buttonClass
-    }
+    'btn product-card__btn',
+    buttonClass
   );
+
+  const { openModal } = useModal();
+
+  const handleClick = () => {
+    openModal('add-to-cart', product);
+  };
 
   return (
     <button
       className={buttonClasses}
       type="button"
+      onClick={handleClick}
     >
-      {isOffer && buttonIcon}
+      {isInCart && buttonIcon}
       {buttonText}
     </button >
   );

@@ -1,5 +1,5 @@
 import { useMemo, useEffect } from 'react';
-import { useUrl } from '../contexts/url-context';
+import { useUrl } from '../contexts';
 
 interface UsePaginationProps {
   totalItems: number;

@@ -1,12 +1,12 @@
-import { CardType, FullOfferType, OfferPromoType } from '../const/type';
+import { FullOfferType, FullOfferType, OfferPromoType } from '../const/type';
 import { APIRoute } from '../const/enum';
 import { NameSpace } from './const';
 import { createAppAsyncThunk } from '../hooks';
 
-const fetchOffers = createAppAsyncThunk<CardType[], undefined>(
+const fetchOffers = createAppAsyncThunk<FullOfferType[], undefined>(
   `${NameSpace.Offers}/fetchOffers`,
   async (_arg, { extra: api }) => {
-    const { data } = await api.get<CardType[]>(APIRoute.Offers);
+    const { data } = await api.get<FullOfferType[]>(APIRoute.Offers);
     return data;
   }
 );
@@ -27,10 +27,10 @@ const fetchOffersPromo = createAppAsyncThunk<OfferPromoType[], undefined>(
   }
 );
 
-const fetchOffersSimilar = createAppAsyncThunk<CardType[], string>(
+const fetchOffersSimilar = createAppAsyncThunk<FullOfferType[], string>(
   `${NameSpace.OffersSimilar}/fetchNearbyOffers`,
   async (id, { extra: api }) => {
-    const { data } = await api.get<CardType[]>(`${APIRoute.Offers}/${id}/similar`);
+    const { data } = await api.get<FullOfferType[]>(`${APIRoute.Offers}/${id}/similar`);
     return data;
   }
 );

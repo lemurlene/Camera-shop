@@ -33,13 +33,6 @@ export type FullOfferType = {
   previewImgWebp2x: string;
 }
 
-type NotCardType = {
-  vendorCode: string;
-  description: string;
-}
-
-export type CardType = Omit<FullOfferType, keyof NotCardType>;
-
 export type OfferPromoType = {
   id: number;
   name: string;

@@ -14,7 +14,7 @@ import { useAppSelector, useAppDispatch } from '../../hooks';
 import { setErrorConnectionOffers } from '../../store/offers/offers.slice';
 import { selectErrorConnectionOffers } from '../../store/offers/offers.selector';
 import { setErrorConnectionOffersPromo } from '../../store/offers-promo/offers-promo.slice';
-import { UrlProvider } from '../../contexts/url-context';
+import { UrlProvider } from '../../contexts/';
 
 function App(): JSX.Element {
   const dispatch = useAppDispatch();

@@ -1,9 +1,9 @@
 import { OfferListMemo } from '.';
-import { CardType } from '../../const/type';
+import { FullOfferType } from '../../const/type';
 import { Setting } from '../../const/const';
 
 type GetPlacesProps = {
-  offersSimilar: CardType[];
+  offersSimilar: FullOfferType[];
 }
 
 function OffersSimilar({ offersSimilar }: GetPlacesProps): JSX.Element {

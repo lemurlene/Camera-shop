@@ -1,7 +1,7 @@
-import { CardType } from '../../const/type';
+import { FullOfferType } from '../../const/type';
 
 export type InitialStateType = {
-  offers: CardType[];
+  offers: FullOfferType[];
   isLoadingOffers: boolean;
   isErrorConnectionOffers: boolean;
 };

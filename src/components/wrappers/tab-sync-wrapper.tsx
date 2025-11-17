@@ -1,5 +1,5 @@
 import { ReactNode, useEffect } from 'react';
-import { useUrl } from '../../contexts/url-context';
+import { useUrl } from '../../contexts';
 
 interface TabSyncWrapperProps {
   children: ReactNode;

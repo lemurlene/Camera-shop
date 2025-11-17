@@ -1,10 +1,10 @@
 import { memo } from 'react';
 import CardMemo from './card';
-import { CardType } from '../../const/type';
+import { FullOfferType } from '../../const/type';
 
 type GetCardsProps = {
   cardsCount?: number;
-  offers: CardType[];
+  offers: FullOfferType[];
   handleHover?: (id: number | null) => void;
 }
 

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { FullOfferType } from '../../const/type';
 import { useTabUrl } from '../../hooks/use-tab-url';
-import ButtonBuyMemo from '../buttons/buy';
+import ButtonAddBasketMemo from '../buttons/add-basket';
 import RateMemo from '../rate';
 
 type GetOfferProps = {
@@ -69,7 +69,7 @@ function Offer({ offer }: GetOfferProps): JSX.Element {
             {price.toLocaleString()}&nbsp;&#8381;
           </p>
 
-          <ButtonBuyMemo isOffer />
+          <ButtonAddBasketMemo />
 
           <div className="tabs product__tabs">
             <div className="tabs__controls product__tabs-controls">

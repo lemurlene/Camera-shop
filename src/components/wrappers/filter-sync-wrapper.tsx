@@ -1,6 +1,6 @@
 import { ReactNode, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { useUrl } from '../../contexts/url-context';
+import { useUrl } from '../../contexts';
 import {
   changeCategory,
   setTypes,

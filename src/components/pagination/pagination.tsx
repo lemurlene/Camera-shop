@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { usePagination } from '../../hooks/use-pagination';
-import { useUrl } from '../../contexts/url-context';
+import { useUrl } from '../../contexts';
 
 interface PaginationProps {
   totalItems: number;
@@ -13,18 +13,14 @@ function Pagination({ totalItems, itemsPerPage = 9 }: PaginationProps): JSX.Elem
     totalPages,
     paginationRange
   } = usePagination({ totalItems, itemsPerPage });
-
   const { getAllParams, setParams } = useUrl();
-
   if (totalPages <= 1) {
     return null;
   }
 
   const createPageUrl = (page: number): string => {
     const currentParams = getAllParams();
-
     const newParams: Record<string, string | string[] | null> = { ...currentParams };
-
     if (page === 1) {
       delete newParams.page;
     } else {
@@ -71,7 +67,6 @@ function Pagination({ totalItems, itemsPerPage = 9 }: PaginationProps): JSX.Elem
             </Link>
           </li>
         )}
-
         {paginationRange.map((page) => {
           if (page === '...') {
             dotsCounter += 1;
@@ -81,7 +76,6 @@ function Pagination({ totalItems, itemsPerPage = 9 }: PaginationProps): JSX.Elem
               </li>
             );
           }
-
           const pageNumber = page as number;
           return (
             <li key={`page-${pageNumber}`} className="pagination__item">
@@ -95,7 +89,6 @@ function Pagination({ totalItems, itemsPerPage = 9 }: PaginationProps): JSX.Elem
             </li>
           );
         })}
-
         {currentPage < totalPages && (
           <li className="pagination__item">
             <Link

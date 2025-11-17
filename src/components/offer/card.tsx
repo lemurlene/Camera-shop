@@ -2,11 +2,11 @@ import { Link } from 'react-router-dom';
 import { memo, useCallback, useMemo } from 'react';
 import ButtonBuyMemo from '../buttons/buy';
 import RateMemo from '../rate';
-import { CardType } from '../../const/type';
+import { FullOfferType } from '../../const/type';
 import { AppRoute } from '../../const/enum';
 
 type CardProps = {
-  card: CardType;
+  card: FullOfferType;
   handleHover?: (id: number | null) => void;
 }
 
@@ -71,7 +71,7 @@ function Card({ card, handleHover }: CardProps): JSX.Element {
         </p>
       </div>
       <div className="product-card__buttons">
-        <ButtonBuyMemo />
+        <ButtonBuyMemo product={card} />
         <Link className="btn btn--transparent" to={`${AppRoute.Catalog}/${id}`}>
           Подробнее
         </Link>

@@ -1,5 +1,4 @@
 import { useEffect, useCallback } from 'react';
-import { Helmet } from 'react-helmet-async';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { TabSyncWrapper } from '../../components/wrappers/tab-sync-wrapper';
 import { selectOffer, selectOfferLoading, selectErrorConnection } from '../../store/offer/offer.selector';
@@ -63,22 +62,15 @@ function OfferPageContent() {
   }
 
   return (
-    <>
-      <Helmet>
-        <title>Camera-shop: offer</title>
-      </Helmet>
-      <main>
-        <div className="page-content">
-          <Breadcrumbs productName={offer.name} />
-          <div className="page-content__section">
-            <Offer offer={offer} />
-          </div>
-          <div className="page-content__section">
-            <OffersSimilar offersSimilar={offersSimilar} />
-          </div>
-        </div>
-      </main>
-    </>
+    <div className="page-content">
+      <Breadcrumbs productName={offer.name} />
+      <div className="page-content__section">
+        <Offer offer={offer} />
+      </div>
+      <div className="page-content__section">
+        <OffersSimilar offersSimilar={offersSimilar} />
+      </div>
+    </div>
   );
 }
 

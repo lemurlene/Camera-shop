@@ -1,4 +1,4 @@
-import { useUrl } from '../contexts/url-context';
+import { useUrl } from '../contexts';
 
 export const useUrlParam = (paramName: string, defaultValue = '') => {
   const { getParam, setParam } = useUrl();

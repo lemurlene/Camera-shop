@@ -1,4 +1,3 @@
-import { Helmet } from 'react-helmet-async';
 import { useMemo, useEffect } from 'react';
 import { useAppSelector, useFilteredProducts, usePagination } from '../../hooks';
 import { selectOffersPromo } from '../../store/offers-promo/offers-promo.selector';
@@ -45,37 +44,32 @@ function MainPageContent(): JSX.Element {
 
   return (
     <>
-      <Helmet>
-        <title>Camera-shop</title>
-      </Helmet>
-      <main data-testid="main-page">
-        <BannerPromo offersPromo={offersPromo} />
-        <div className="page-content">
-          <Breadcrumbs />
-          <section className="catalog">
-            <div className="container">
-              <h1 className="title title--h2">Каталог фото- и видеотехники</h1>
-              <div className="page-content__columns">
-                <div className="catalog__aside">
-                  <СatalogFiltersMemo priceRange={filteredPriceRange} />
-                </div>
-                <div className="catalog__content">
-                  <Sort />
-                  {isEmpty && <MainEmpty />}
-                  {!isEmpty && (
-                    <>
-                      <div className="cards catalog__cards">
-                        <OfferListMemo offers={paginatedProducts} />
-                      </div>
-                      <Pagination totalItems={filteredProducts.length} itemsPerPage={Setting.CardsCountOnCatalog} />
-                    </>
-                  )}
-                </div>
+      <BannerPromo offersPromo={offersPromo} />
+      <div className="page-content">
+        <Breadcrumbs />
+        <section className="catalog">
+          <div className="container">
+            <h1 className="title title--h2">Каталог фото- и видеотехники</h1>
+            <div className="page-content__columns">
+              <div className="catalog__aside">
+                <СatalogFiltersMemo priceRange={filteredPriceRange} />
+              </div>
+              <div className="catalog__content">
+                <Sort />
+                {isEmpty && <MainEmpty />}
+                {!isEmpty && (
+                  <>
+                    <div className="cards catalog__cards">
+                      <OfferListMemo offers={paginatedProducts} />
+                    </div>
+                    <Pagination totalItems={filteredProducts.length} itemsPerPage={Setting.CardsCountOnCatalog} />
+                  </>
+                )}
               </div>
             </div>
-          </section>
-        </div >
-      </main >
+          </div>
+        </section>
+      </div >
     </>
   );
 }
