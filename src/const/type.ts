@@ -41,3 +41,8 @@ export type OfferPromoType = {
   previewImgWebp: string;
   previewImgWebp2x: string;
 }
+
+export type OfferSearchType = {
+  id: number;
+  name: string;
+}

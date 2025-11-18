@@ -5,7 +5,7 @@ import HeaderBasketLinkMemo from './header-basket-link';
 import LogoMemo from './logo';
 import HeaderNavMemo from './header-nav';
 import FooterMemo from './footer';
-import FormSearchMemo from './form-search';
+import FormSearchMemo from '../form-search';
 import { LogoConfig } from './const';
 import { ModalProvider } from '../../contexts';
 import { ModalContainer } from '../modals/modal-container';
