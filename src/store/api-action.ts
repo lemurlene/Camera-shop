@@ -1,4 +1,4 @@
-import { FullOfferType, OfferPromoType } from '../const/type';
+import { FullOfferType, OfferPromoType, ReviewType } from '../const/type';
 import { APIRoute } from '../const/enum';
 import { NameSpace } from './const';
 import { createAppAsyncThunk } from '../hooks';
@@ -35,9 +35,18 @@ const fetchOffersSimilar = createAppAsyncThunk<FullOfferType[], string>(
   }
 );
 
+const fetchOfferComments = createAppAsyncThunk<ReviewType[], string>(
+  `${NameSpace.Reviews}/fetchOfferComments`,
+  async (id, { extra: api }) => {
+    const { data } = await api.get<ReviewType[]>(`${APIRoute.Offers}/${id}/reviews`);
+    return data;
+  }
+);
+
 export {
   fetchOffers,
   getOfferInfoById,
   fetchOffersPromo,
-  fetchOffersSimilar
+  fetchOffersSimilar,
+  fetchOfferComments
 };

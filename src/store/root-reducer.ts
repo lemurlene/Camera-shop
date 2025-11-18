@@ -7,6 +7,7 @@ import { offersSlice } from './offers/offers.slice';
 import { offerSlice } from './offer/offer.slice';
 import { offersPromoSlice } from './offers-promo/offers-promo.slice';
 import { offersSimilarSlice } from './offers-similar/offers-similar.slice';
+import reviewsSlice from './reviews/reviews.slice';
 
 const rootReducer = combineReducers({
   [NameSpace.Filters]: filtersSlice.reducer,
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   [NameSpace.Offer]: offerSlice.reducer,
   [NameSpace.OffersPromo]: offersPromoSlice.reducer,
   [NameSpace.OffersSimilar]: offersSimilarSlice.reducer,
+  [NameSpace.Reviews]: reviewsSlice.reducer,
 });
 
 export default rootReducer;

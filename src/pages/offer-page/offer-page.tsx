@@ -3,9 +3,11 @@ import { useAppDispatch, useAppSelector } from '../../hooks';
 import { TabSyncWrapper } from '../../components/wrappers/tab-sync-wrapper';
 import { selectOffer, selectOfferLoading, selectErrorConnection } from '../../store/offer/offer.selector';
 import { selectOffersSimilar, selectOffersSimilarLoading } from '../../store/offers-similar/offers-similar.selector';
+import { selectCommentsOffersStatus, selectOffersComments } from '../../store/reviews/reviews.selector';
 import { Offer, OffersSimilar } from '../../components/offer';
 import Breadcrumbs from '../../components/breadcrumbs';
-import { getOfferInfoById, fetchOffersSimilar } from '../../store/api-action';
+import Reviews from '../../components/reviews';
+import { getOfferInfoById, fetchOffersSimilar, fetchOfferComments } from '../../store/api-action';
 import { setErrorConnectionStatusOffer } from '../../store/offer/offer.slice';
 import LoadingPage from '../loading-page/loading-page';
 import NotFoundPage from '../not-found-page/not-found-page';
@@ -27,6 +29,11 @@ function OfferPageContent() {
     selectOffersSimilarLoading(state)
   ]);
 
+  const [comments, isOffersCommentsLoading] = useAppSelector((state) => [
+    selectOffersComments(state),
+    selectCommentsOffersStatus(state)
+  ]);
+
   const loadOfferData = useCallback(async () => {
     if (!offerId) {
       return;
@@ -35,7 +42,8 @@ function OfferPageContent() {
     try {
       await dispatch(getOfferInfoById(offerId)).unwrap();
       await Promise.all([
-        dispatch(fetchOffersSimilar(offerId))
+        dispatch(fetchOffersSimilar(offerId)),
+        dispatch(fetchOfferComments(offerId))
       ]);
     } catch {
       dispatch(setErrorConnectionStatusOffer(true));
@@ -53,7 +61,7 @@ function OfferPageContent() {
     return <ErrorServer />;
   }
 
-  if (isOfferLoading || isLoadingOffersSimilar) {
+  if (isOfferLoading || isLoadingOffersSimilar || isOffersCommentsLoading) {
     return <LoadingPage />;
   }
 
@@ -69,6 +77,9 @@ function OfferPageContent() {
       </div>
       <div className="page-content__section">
         <OffersSimilar offersSimilar={offersSimilar} />
+      </div>
+      <div className="page-content__section">
+        <Reviews comments={comments} />
       </div>
     </div>
   );
