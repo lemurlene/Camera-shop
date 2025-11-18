@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect } from 'react';
-import ReactDOM from 'react-dom';
 import { useModalFocus } from '../../hooks/use-modal-focus';
 import { getFocusableElements } from './utils';
 
@@ -75,7 +74,7 @@ export const Modal: React.FC<ModalProps> = ({
 
   const modalClass = `modal is-active ${narrow ? 'modal--narrow' : ''}`;
 
-  return ReactDOM.createPortal(
+  return (
     <div className={modalClass} ref={modalRef}>
       <div className="modal__wrapper">
         <div className="modal__overlay" onClick={handleOverlayClick}></div>
@@ -93,7 +92,6 @@ export const Modal: React.FC<ModalProps> = ({
           {children}
         </div>
       </div>
-    </div>,
-    document.body
+    </div>
   );
 };
