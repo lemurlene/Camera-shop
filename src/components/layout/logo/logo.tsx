@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { memo } from 'react';
 import { AppRoute } from '../../../const/enum';
-import { getLayoutState } from './utils';
+import { getLayoutState } from '../utils';
 import { LogoConfigType } from './type';
 
 type LogoProps = {

@@ -4,15 +4,19 @@ import { RouteNames } from '../../const/const';
 import HeaderBasketLinkMemo from './header-basket-link';
 import LogoMemo from './logo';
 import HeaderNavMemo from './header-nav';
+import { ButtonUpMemo } from '../buttons';
 import FooterMemo from './footer';
 import FormSearchMemo from '../form-search';
 import { LogoConfig } from './const';
 import { ModalProvider } from '../../contexts';
 import { ModalContainer } from '../modals/modal-container';
+import { getLayoutState } from './utils';
+import { AppRoute } from '../../const/enum';
 
 function Layout() {
   const location = useLocation();
   const pageTitle = RouteNames[location.pathname as keyof typeof RouteNames];
+  const { isRenderButtonUp } = getLayoutState(location.pathname as AppRoute);
 
   return (
     <ModalProvider>
@@ -32,6 +36,7 @@ function Layout() {
           <Outlet />
           <ModalContainer />
         </main>
+        {isRenderButtonUp && <ButtonUpMemo />}
         <FooterMemo />
       </div>
     </ModalProvider>
