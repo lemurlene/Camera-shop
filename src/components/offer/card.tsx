@@ -43,7 +43,7 @@ function Card({ card, handleHover }: CardProps): JSX.Element {
       {...eventHandlers}
     >
       <div className="product-card__img">
-        <Link to={`${AppRoute.Catalog}/${id}`}>
+        <Link to={`${AppRoute.Catalog}/${id}?tab=description`}>
           <picture>
             <source
               type="image/webp"

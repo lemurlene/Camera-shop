@@ -1,4 +1,5 @@
 import { FullOfferType, LevelValue, TypeValue } from '../const/type';
+import { normalizeImagePath } from './utils';
 
 type ServerOffer = {
   id: number;
@@ -20,6 +21,10 @@ type ServerOffer = {
 export const adaptOfferToClient = (serverOffer: ServerOffer): FullOfferType => ({
   ...serverOffer,
   category: serverOffer.category === 'Фотоаппарат' ? 'Фотокамера' : 'Видеокамера',
+  previewImg: normalizeImagePath(serverOffer.previewImg),
+  previewImg2x: normalizeImagePath(serverOffer.previewImg2x),
+  previewImgWebp: normalizeImagePath(serverOffer.previewImgWebp),
+  previewImgWebp2x: normalizeImagePath(serverOffer.previewImgWebp2x),
 });
 
 export const adaptOffersToClient = (serverOffers: ServerOffer[]): FullOfferType[] => serverOffers.map(adaptOfferToClient);
