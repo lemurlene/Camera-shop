@@ -74,9 +74,7 @@ function OfferPageContent() {
       <div className="page-content__section">
         <Offer offer={offer} />
       </div>
-      <div className="page-content__section">
-        <OffersSimilar offersSimilar={offersSimilar} />
-      </div>
+      <OffersSimilar offersSimilar={offersSimilar} />
       <div className="page-content__section">
         <Reviews comments={comments} />
       </div>

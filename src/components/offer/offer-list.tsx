@@ -13,12 +13,13 @@ function OfferList({ offers, cardsCount = offers.length, handleHover }: GetCards
   return (
     <>
       {cardsOnList.map((card) => (
-        <CardMemo
-          data-testid="card"
-          key={card.id}
-          card={card}
-          handleHover={handleHover}
-        />
+        <div className="product-card" key={card.id}>
+          <CardMemo
+            data-testid="card"
+            card={card}
+            handleHover={handleHover}
+          />
+        </div>
       ))}
     </>
   );

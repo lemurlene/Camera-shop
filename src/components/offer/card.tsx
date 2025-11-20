@@ -7,10 +7,11 @@ import { AppRoute } from '../../const/enum';
 
 type CardProps = {
   card: FullOfferType;
+  isSlide?: boolean;
   handleHover?: (id: number | null) => void;
 }
 
-function Card({ card, handleHover }: CardProps): JSX.Element {
+function Card({ card, handleHover, isSlide = false }: CardProps): JSX.Element {
   const {
     id,
     name,
@@ -22,6 +23,8 @@ function Card({ card, handleHover }: CardProps): JSX.Element {
     previewImgWebp,
     previewImgWebp2x,
   } = card;
+
+  const cardClassName = `product-card${isSlide ? ' is-active' : ''}`;
 
   const handleMouseEnter = useCallback(() => {
     handleHover?.(id);
@@ -39,7 +42,7 @@ function Card({ card, handleHover }: CardProps): JSX.Element {
   ), [handleHover, handleMouseEnter, handleMouseLeave]);
 
   return (
-    <div className="product-card"
+    <div className={cardClassName}
       {...eventHandlers}
     >
       <div className="product-card__img">
@@ -76,7 +79,7 @@ function Card({ card, handleHover }: CardProps): JSX.Element {
           Подробнее
         </Link>
       </div>
-    </div>
+    </div >
   );
 }
 

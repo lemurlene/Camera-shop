@@ -34,7 +34,7 @@ function BannerPromo({ offersPromo }: BannerPromoProps): JSX.Element {
       slidesPerView={1}
       spaceBetween={0}
       loop={shouldShowPagination}
-      className="banner-swiper"
+      className="banner-swiper container"
     >
       {limitedOffers.map((offer) => (
         <SwiperSlide key={offer.id}>
