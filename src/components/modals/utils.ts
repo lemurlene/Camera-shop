@@ -1,4 +1,3 @@
-// utils/modal-utils.ts
 export const getFocusableElements = (container: HTMLElement): HTMLElement[] => {
   const focusableSelectors = [
     'button:not([disabled])',

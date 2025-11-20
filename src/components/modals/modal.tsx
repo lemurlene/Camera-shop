@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { useModalFocus } from '../../hooks/use-modal-focus';
+import { useModalFocus } from '../../hooks';
 import { getFocusableElements } from './utils';
 
 interface ModalProps {

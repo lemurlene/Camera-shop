@@ -1,5 +1,5 @@
 import { createContext, useContext, ReactNode } from 'react';
-import { useUrlState } from '../hooks/use-url-state';
+import { useUrlState } from '../hooks';
 
 interface UrlContextType {
   getParam: (key: string) => string | null;

@@ -1,16 +1,16 @@
 import { useMemo, useEffect } from 'react';
 import { useAppSelector, useFilteredProducts, usePagination, usePriceSync } from '../../hooks';
-import { selectOffersPromo } from '../../store/offers-promo/offers-promo.selector';
+import { selectOffersPromo } from '../../store/offers-promo';
 import BannerPromo from '../../components/banner-promo';
 import Breadcrumbs from '../../components/breadcrumbs';
 import СatalogFiltersMemo from '../../components/catalog-filters';
 import MainEmpty from './main-empty';
 import Sort from '../../components/sort';
 import { OfferListMemo } from '../../components/offer';
-import Pagination from '../../components/pagination/pagination';
-import { FilterSyncWrapper } from '../../components/wrappers/filter-sync-wrapper';
-import { useUrl } from '../../contexts/url-context';
-import { Setting } from '../../const/const.ts';
+import Pagination from '../../components/pagination';
+import { FilterSyncWrapper } from '../../components/wrappers';
+import { useUrl } from '../../contexts';
+import { Setting } from '../../const/const';
 
 function MainPageContent(): JSX.Element {
   const { filteredProducts, filteredPriceRange } = useFilteredProducts();

@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal } from './modal';
 import { BasketCardMemo } from '../offer';
 import { useModal } from '../../contexts';
-import ButtonAddBasketMemo from '../buttons/add-basket';
+import { ButtonAddBasketMemo } from '../buttons';
 import { FullOfferType } from '../../const/type';
 
 interface AddToCartModalProps {

@@ -1,8 +1,8 @@
 import { useAppSelector } from './';
 import { useMemo } from 'react';
-import { selectOffers } from '../store/offers/offers.selector';
-import { selectAllFilters } from '../store/filters/filters.selector';
-import { selectSortType, selectSortOrder } from '../store/sort/sort.selector';
+import { selectOffers } from '../store/offers';
+import { selectAllFilters } from '../store/filters';
+import { selectSortType, selectSortOrder } from '../store/sort';
 import { CategoryToKey, TypeToKey, LevelToKey } from '../const/const';
 import { sortOffers } from '../components/sort/utils';
 

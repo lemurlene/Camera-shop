@@ -1,16 +1,15 @@
 import { useEffect, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { TabSyncWrapper } from '../../components/wrappers/tab-sync-wrapper';
-import { selectOffer, selectOfferLoading, selectErrorConnection } from '../../store/offer/offer.selector';
-import { selectOffersSimilar, selectOffersSimilarLoading } from '../../store/offers-similar/offers-similar.selector';
-import { selectCommentsOffersStatus, selectOffersComments } from '../../store/reviews/reviews.selector';
+import { TabSyncWrapper } from '../../components/wrappers';
+import { selectOffer, selectOfferLoading, selectErrorConnection, setErrorConnectionStatusOffer } from '../../store/offer';
+import { selectOffersSimilar, selectOffersSimilarLoading } from '../../store/offers-similar';
+import { selectCommentsOffersStatus, selectOffersComments } from '../../store/reviews';
 import { Offer, OffersSimilar } from '../../components/offer';
 import Breadcrumbs from '../../components/breadcrumbs';
 import Reviews from '../../components/reviews';
 import { getOfferInfoById, fetchOffersSimilar, fetchOfferComments } from '../../store/api-action';
-import { setErrorConnectionStatusOffer } from '../../store/offer/offer.slice';
-import LoadingPage from '../loading-page/loading-page';
-import NotFoundPage from '../not-found-page/not-found-page';
+import LoadingPage from '../loading-page';
+import NotFoundPage from '../not-found-page';
 import ErrorServer from '../../components/error-server';
 import { useId } from '../../utils';
 

@@ -1,0 +1,13 @@
+.banner-swiper .swiper-pagination {
+text-align: right;
+}
+
+.banner-swiper .swiper-pagination-bullet {
+  width: 18px;
+  height: 18px;
+  background: #ffffff;
+}
+
+.banner-swiper .swiper-pagination-bullet-active {
+  background: #7575e2;
+}

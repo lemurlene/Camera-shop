@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useAppSelector } from './';
 import { useUrl } from '../contexts';
-import { selectMinPrice, selectMaxPrice } from '../store/filters/filters.selector';
+import { selectMinPrice, selectMaxPrice } from '../store/filters';
 
 export const usePriceSync = () => {
   const { setParam } = useUrl();

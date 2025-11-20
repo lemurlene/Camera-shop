@@ -11,9 +11,8 @@ import DevelopmentPage from '../../pages/development-page';
 import { fetchOffers, fetchOffersPromo } from '../../store/api-action';
 import { AppRoute } from '../../const/enum';
 import { useAppSelector, useAppDispatch } from '../../hooks';
-import { setErrorConnectionOffers } from '../../store/offers/offers.slice';
-import { selectErrorConnectionOffers } from '../../store/offers/offers.selector';
-import { setErrorConnectionOffersPromo } from '../../store/offers-promo/offers-promo.slice';
+import { setErrorConnectionOffers, selectErrorConnectionOffers } from '../../store/offers';
+import { setErrorConnectionOffersPromo } from '../../store/offers-promo';
 import { UrlProvider } from '../../contexts/';
 
 function App(): JSX.Element {

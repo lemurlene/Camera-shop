@@ -9,7 +9,7 @@ import FooterMemo from './footer';
 import FormSearchMemo from '../form-search';
 import { LogoConfig } from './const';
 import { ModalProvider } from '../../contexts';
-import { ModalContainer } from '../modals/modal-container';
+import ModalContainer from '../modals';
 import { getLayoutState } from './utils';
 import { AppRoute } from '../../const/enum';
 

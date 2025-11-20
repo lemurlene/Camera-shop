@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { memo, useCallback, useMemo } from 'react';
-import ButtonBuyMemo from '../buttons/buy';
+import { ButtonBuyMemo } from '../buttons';
 import RateMemo from '../rate';
 import { FullOfferType } from '../../const/type';
 import { AppRoute } from '../../const/enum';

@@ -1,6 +1,6 @@
-import { useModal } from '../../contexts/modal-context';
+import { useModal } from '../../contexts';
 import { Modal } from './modal';
-import ButtonAddBasketMemo from '../buttons/add-basket';
+import { ButtonAddBasketMemo } from '../buttons';
 
 export const SuccessAddCartModal: React.FC = () => {
   const { closeModal } = useModal();

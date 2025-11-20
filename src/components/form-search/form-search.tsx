@@ -1,6 +1,6 @@
 import { memo, useState, useRef, useEffect, useCallback } from 'react';
 import { useAppSelector } from '../../hooks';
-import { selectOffers } from '../../store/offers/offers.selector';
+import { selectOffers } from '../../store/offers';
 import { SearchInputMemo } from './search-input';
 import { ResetButtonMemo } from './reset-button';
 import { SearchListMemo } from './search-list';

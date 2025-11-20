@@ -5,6 +5,7 @@ export const Setting = {
   MaxRatingStars: 5,
   ProductSimilarCount: 3,
   MaxShowReviews: 3,
+  MaxShowPromo: 3,
 } as const;
 
 export const RouteNames = {

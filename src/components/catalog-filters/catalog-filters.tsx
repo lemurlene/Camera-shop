@@ -6,15 +6,13 @@ import {
   changeLevel,
   changeMinPrice,
   changeMaxPrice,
-  resetFilters
-} from '../../store/filters/filters.slice';
-import {
+  resetFilters,
   selectCurrentCategory,
   selectCurrentType,
   selectCurrentLevel,
   selectMinPrice,
   selectMaxPrice
-} from '../../store/filters/filters.selector';
+} from '../../store/filters';
 import {
   Categories, Levels, Types,
   CATEGORY_KEYS, LEVEL_KEYS, TYPE_KEYS

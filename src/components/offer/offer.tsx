@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { FullOfferType } from '../../const/type';
-import { useTabUrl } from '../../hooks/use-tab-url';
-import ButtonAddBasketMemo from '../buttons/add-basket';
+import { useTabUrl } from '../../hooks';
+import { ButtonAddBasketMemo } from '../buttons';
 import RateMemo from '../rate';
 
 type GetOfferProps = {

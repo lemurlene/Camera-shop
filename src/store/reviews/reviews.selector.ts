@@ -6,4 +6,4 @@ const selectOffersComments = (state: State):ReviewType[] => state[NameSpace.Revi
 const selectCommentsOffersStatus = (state: State):boolean => state[NameSpace.Reviews].isLoadingComments;
 const selectCommentStatus = (state: State):boolean => state[NameSpace.Reviews].isLoadingComment;
 
-export {selectOffersComments, selectCommentsOffersStatus, selectCommentStatus};
+export { selectOffersComments, selectCommentsOffersStatus, selectCommentStatus };

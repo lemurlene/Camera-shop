@@ -6,4 +6,4 @@ const selectOffer = (state: State):FullOfferType | null => state[NameSpace.Offer
 const selectOfferLoading = (state: State):boolean => state[NameSpace.Offer].isLoadingOffer;
 const selectErrorConnection = (state: State): boolean => state[NameSpace.Offer].isErrorConnectionOffer;
 
-export {selectOffer, selectOfferLoading, selectErrorConnection};
+export {selectOffer, selectOfferLoading, selectErrorConnection };

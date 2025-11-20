@@ -1,6 +1,5 @@
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { changeSortType, changeSortOrder } from '../../store/sort/sort.slice';
-import { selectSortType, selectSortOrder } from '../../store/sort/sort.selector';
+import { changeSortType, changeSortOrder, selectSortType, selectSortOrder } from '../../store/sort';
 import { SortTypes, SortOrders } from './const';
 import { SortType, SortOrder } from './type';
 
