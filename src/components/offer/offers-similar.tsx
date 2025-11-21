@@ -61,8 +61,8 @@ function OffersSimilar({ offersSimilar }: OffersSimilarProps): JSX.Element {
             </Swiper>
           </div>
         </div>
-      </section>
-    </div>
+      </section >
+    </div >
   );
 }
 

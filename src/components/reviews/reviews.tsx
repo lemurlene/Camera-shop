@@ -1,60 +1,44 @@
-import { useState } from 'react';
-import dayjs from 'dayjs';
-import Review from './review';
 import { ReviewType } from '../../const/type';
-import { Setting } from '../../const/const';
+import ReviewsList from './reviews-list';
+import ReviewsHeader from './reviews-header';
+import ButtonLoadMore from './button-load-more';
+import ScrollSentinel from './scroll-sentinel';
+import { useReviewsPagination, useInfiniteScroll } from '../../hooks';
+import { sortReviewsByDate, getVisibleReviews } from './utils';
 
 type GetReviewProps = {
   comments: ReviewType[];
 }
 
 function Reviews({ comments }: GetReviewProps): JSX.Element {
-  const [visibleReviewsCount, setVisibleReviewsCount] = useState<number>(Setting.MaxShowReviews);
+  const {
+    visibleReviewsCount,
+    isLoading,
+    hasMoreReviews,
+    handleShowMore
+  } = useReviewsPagination({ comments });
 
-  const sortedReviews = [...comments].sort((a: ReviewType, b: ReviewType) =>
-    dayjs(b.createAt).diff(dayjs(a.createAt))
-  );
+  useInfiniteScroll({
+    hasMore: hasMoreReviews,
+    isLoading,
+    onLoadMore: handleShowMore,
+    threshold: 500
+  });
 
-  const visibleReviews = sortedReviews.slice(0, visibleReviewsCount);
-  const hasMoreReviews = visibleReviewsCount < comments.length;
-  const handleShowMore = () => {
-    const remainingReviews = comments.length - visibleReviewsCount;
-    const nextCount = remainingReviews >= Setting.MaxShowReviews
-      ? visibleReviewsCount + Setting.MaxShowReviews
-      : comments.length;
-
-    setVisibleReviewsCount(nextCount);
-  };
+  const sortedReviews = sortReviewsByDate(comments);
+  const visibleReviews = getVisibleReviews(sortedReviews, visibleReviewsCount);
 
   return (
     <section className="review-block">
       <div className="container">
-        <div className="page-content__headed">
-          <h2 className="title title--h3">Отзывы</h2>
-          <button
-            className="btn"
-            type="button"
-            disabled
-          >
-            Оставить свой отзыв
-          </button>
-        </div>
-        <ul className="review-block__list">
-          {visibleReviews.map((review) => (
-            <Review key={review.id} {...review} />
-          ))}
-        </ul>
-        {hasMoreReviews && (
-          <div className="review-block__buttons">
-            <button
-              className="btn btn--purple"
-              type="button"
-              onClick={handleShowMore}
-            >
-              Показать больше отзывов
-            </button>
-          </div>
-        )}
+        <ReviewsHeader />
+        <ReviewsList reviews={visibleReviews} />
+        <ScrollSentinel isVisible={hasMoreReviews} onIntersect={handleShowMore} />
+        <ButtonLoadMore
+          hasMoreReviews={hasMoreReviews}
+          isLoading={isLoading}
+          onShowMore={handleShowMore}
+        />
       </div>
     </section>
   );
