@@ -24,9 +24,7 @@ function SearchList({
   listRef,
 }: SearchListProps) {
   const navigate = useNavigate();
-
   const sortedOffers = sortOffersSearch(offers);
-
   const handleSuggestionSelect = (offer: OfferSearchType) => {
     onSuggestionClick(offer);
     navigate(`${AppRoute.Catalog}/${offer.id}`);
@@ -35,7 +33,6 @@ function SearchList({
   if (!isListOpen) {
     return null;
   }
-
   if (sortedOffers.length === 0 && searchValue) {
     return (
       <div className="form-search__select-list">
@@ -43,11 +40,9 @@ function SearchList({
       </div>
     );
   }
-
   if (sortedOffers.length === 0) {
     return null;
   }
-
   return (
     <ul
       ref={listRef}

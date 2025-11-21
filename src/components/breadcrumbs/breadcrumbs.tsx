@@ -1,62 +1,15 @@
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { AppRoute } from '../../const/enum';
-import { RouteNames } from '../../const/const';
+import { getCurrentRoute, generateBreadcrumbs, BreadcrumbItem } from './utils';
 
 type BreadcrumbsProps = {
   productName?: string;
 };
 
-type BreadcrumbItem = {
-  label: string;
-  href: AppRoute | null;
-};
-
-const breadcrumbChains: Record<AppRoute, AppRoute[]> = {
-  [AppRoute.Root]: [],
-  [AppRoute.Catalog]: [AppRoute.Root],
-  [AppRoute.Offer]: [AppRoute.Root, AppRoute.Catalog],
-  [AppRoute.Guarantees]: [AppRoute.Root],
-  [AppRoute.Delivery]: [AppRoute.Root],
-  [AppRoute.About]: [AppRoute.Root],
-  [AppRoute.Basket]: [AppRoute.Root, AppRoute.Catalog],
-  [AppRoute.Loading]: [AppRoute.Root],
-  [AppRoute.Error404]: [AppRoute.Root],
-};
-
 function Breadcrumbs({ productName }: BreadcrumbsProps): JSX.Element {
   const { pathname } = useLocation();
   const { offerId } = useParams();
-
-  const getCurrentRoute = (): AppRoute => {
-    if (offerId) {
-      return AppRoute.Offer;
-    }
-
-    const exactMatch = Object.values(AppRoute).find((route) => route === pathname);
-    if (exactMatch) {
-      return exactMatch;
-    }
-
-    if (pathname.startsWith('/catalog/')) {
-      return AppRoute.Offer;
-    }
-
-    return AppRoute.Root;
-  };
-
-  const currentRoute = getCurrentRoute();
-  const chain = breadcrumbChains[currentRoute];
-
-  const breadcrumbs: BreadcrumbItem[] = [
-    ...chain.map((route) => ({
-      label: RouteNames[route],
-      href: route
-    })),
-    {
-      label: productName || RouteNames[currentRoute],
-      href: null
-    }
-  ];
+  const currentRoute = getCurrentRoute(pathname, offerId);
+  const breadcrumbs: BreadcrumbItem[] = generateBreadcrumbs(currentRoute, productName);
 
   return (
     <div className="breadcrumbs">

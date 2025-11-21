@@ -66,3 +66,4 @@ function BannerPromo({ offersPromo }: BannerPromoProps): JSX.Element {
 }
 
 export default BannerPromo;
+

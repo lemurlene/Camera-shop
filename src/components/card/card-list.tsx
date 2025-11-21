@@ -8,7 +8,7 @@ type GetCardsProps = {
   handleHover?: (id: number | null) => void;
 }
 
-function OfferList({ offers, cardsCount = offers.length, handleHover }: GetCardsProps): JSX.Element {
+function CardList({ offers, cardsCount = offers.length, handleHover }: GetCardsProps): JSX.Element {
   const cardsOnList = offers.slice(0, Math.min(cardsCount, offers.length));
   return (
     <>
@@ -25,6 +25,6 @@ function OfferList({ offers, cardsCount = offers.length, handleHover }: GetCards
   );
 }
 
-const OfferListMemo = memo(OfferList);
+const CardListMemo = memo(CardList);
 
-export default OfferListMemo;
+export default CardListMemo;

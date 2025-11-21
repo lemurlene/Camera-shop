@@ -4,7 +4,8 @@ import { TabSyncWrapper } from '../../components/wrappers';
 import { selectOffer, selectOfferLoading, selectErrorConnection, setErrorConnectionStatusOffer } from '../../store/offer';
 import { selectOffersSimilar, selectOffersSimilarLoading } from '../../store/offers-similar';
 import { selectCommentsOffersStatus, selectOffersComments } from '../../store/reviews';
-import { Offer, OffersSimilar } from '../../components/offer';
+import { Offer } from '../../components/offer';
+import { OffersSimilar } from '../../components/offers-similar';
 import Breadcrumbs from '../../components/breadcrumbs';
 import Reviews from '../../components/reviews';
 import { getOfferInfoById, fetchOffersSimilar, fetchOfferComments } from '../../store/api-action';
@@ -68,13 +69,15 @@ function OfferPageContent() {
     return <NotFoundPage />;
   }
 
+  const isEmptyOffersSimilar = offersSimilar.length === 0;
+
   return (
     <div className="page-content">
       <Breadcrumbs productName={offer.name} />
       <div className="page-content__section">
         <Offer offer={offer} />
       </div>
-      <OffersSimilar offersSimilar={offersSimilar} />
+      {!isEmptyOffersSimilar && <OffersSimilar offersSimilar={offersSimilar} />}
       <div className="page-content__section">
         <Reviews comments={comments} />
       </div>

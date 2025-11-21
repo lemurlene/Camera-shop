@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal } from './modal';
-import { BasketCardMemo } from '../offer';
+import { BasketCardMemo } from '../card';
 import { useModal } from '../../contexts';
 import { ButtonAddBasketMemo } from '../buttons';
 import { FullOfferType } from '../../const/type';

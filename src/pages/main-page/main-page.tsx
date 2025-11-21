@@ -6,7 +6,7 @@ import Breadcrumbs from '../../components/breadcrumbs';
 import СatalogFiltersMemo from '../../components/catalog-filters';
 import MainEmpty from './main-empty';
 import Sort from '../../components/sort';
-import { OfferListMemo } from '../../components/offer';
+import { CardListMemo } from '../../components/card';
 import Pagination from '../../components/pagination';
 import { FilterSyncWrapper } from '../../components/wrappers';
 import { useUrl } from '../../contexts';
@@ -61,7 +61,7 @@ function MainPageContent(): JSX.Element {
                 {!isEmpty && (
                   <>
                     <div className="cards catalog__cards">
-                      <OfferListMemo offers={paginatedProducts} />
+                      <CardListMemo offers={paginatedProducts} />
                     </div>
                     <Pagination totalItems={filteredProducts.length} itemsPerPage={Setting.CardsCountOnCatalog} />
                   </>

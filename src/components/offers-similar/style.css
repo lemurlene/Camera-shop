@@ -1,3 +1,7 @@
 .product-similar .product-card.is-active {
   width: auto;
 }
+
+.slider-controls {
+  pointer-events: auto !important;
+}
