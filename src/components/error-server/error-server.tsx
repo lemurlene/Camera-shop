@@ -12,7 +12,7 @@ function ErrorServer({ mainPage = false }: ErrorServerProps): JSX.Element | null
       <Helmet>
         <title>Camera-shop: Error server</title>
       </Helmet>
-      <main data-testid="not-found-page">
+      <main data-testid="error-server">
         <div className="page-content">
           <div className="container">
             <h1 className="title title--h2">Error server</h1>

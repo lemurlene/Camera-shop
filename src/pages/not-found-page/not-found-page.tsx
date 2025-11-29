@@ -3,7 +3,7 @@ import Breadcrumbs from '../../components/breadcrumbs';
 
 function NotFoundPage(): JSX.Element {
   return (
-    <div className="page-content">
+    <div className="page-content" data-testid="not-found-page">
       <Breadcrumbs />
       <div className="container">
         <h1 className="title title--h2">404 Page not found</h1>

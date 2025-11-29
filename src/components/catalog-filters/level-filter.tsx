@@ -1,28 +1,37 @@
-import { memo, useCallback, KeyboardEvent } from 'react';
+import { memo, useCallback, KeyboardEvent, useMemo } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { changeLevel, selectCurrentLevel } from '../../store/filters';
 import { Levels, LEVEL_KEYS } from '../../const/const';
 
+
 const LevelFilter = (): JSX.Element => {
   const dispatch = useAppDispatch();
-  const currentLevel = useAppSelector(selectCurrentLevel);
+  const rawCurrentLevel = useAppSelector(selectCurrentLevel);
+
+  const currentLevel = useMemo(() =>
+    Array.isArray(rawCurrentLevel) ? rawCurrentLevel : [],
+  [rawCurrentLevel]
+  );
 
   const handleLevelChange = useCallback((levelKey: keyof typeof Levels) => {
     dispatch(changeLevel(levelKey));
   }, [dispatch]);
 
-  const handleLevelKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement>, levelKey: keyof typeof Levels) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleLevelChange(levelKey);
-    }
-  }, [handleLevelChange]);
+  const handleLevelKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLInputElement>, levelKey: keyof typeof Levels) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        handleLevelChange(levelKey);
+      }
+    },
+    [handleLevelChange]
+  );
 
   const isLevelChecked = (levelKey: keyof typeof Levels): boolean =>
     currentLevel.includes(levelKey);
 
   return (
-    <fieldset className="catalog-filter__block">
+    <fieldset className="catalog-filter__block" data-testid="level-filter">
       <legend className="title title--h5">Уровень</legend>
       {LEVEL_KEYS.map((levelKey) => (
         <div key={levelKey} className="custom-checkbox catalog-filter__item">

@@ -10,10 +10,6 @@ const sortBy = {
     const sorted = [...offers].sort((a, b) => b.rating - a.rating);
     return order === 'desc' ? sorted.reverse() : sorted;
   },
-  Alphabet: (offers: FullOfferType[], order: SortOrder): FullOfferType[] => {
-    const sorted = [...offers].sort((a, b) => a.name.localeCompare(b.name));
-    return order === 'desc' ? sorted.reverse() : sorted;
-  },
 };
 
 export const sortOffers = (offers: FullOfferType[], type: SortType, order: SortOrder): FullOfferType[] =>

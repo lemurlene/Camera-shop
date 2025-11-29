@@ -119,7 +119,7 @@ function FormSearch() {
 
   return (
     <div className={formSearchClasses}>
-      <form onSubmit={(e) => e.preventDefault()}>
+      <form onSubmit={(e) => e.preventDefault()} role="search">
         <SearchInputMemo
           searchValue={searchValue}
           isListOpen={isListOpen}

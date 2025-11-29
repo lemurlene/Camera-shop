@@ -1,0 +1,85 @@
+import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+vi.mock('../../contexts', () => ({
+  useModal: vi.fn(),
+}));
+
+vi.mock('./add-to-cart-modal', () => ({
+  AddToCartModal: vi.fn(() => <div data-testid="add-to-cart-modal">Add to Cart</div>),
+}));
+
+vi.mock('./success-add-cart-modal', () => ({
+  SuccessAddCartModal: vi.fn(() => <div data-testid="success-add-cart-modal">Success</div>),
+}));
+
+import { ModalContainer } from './modal-container';
+import { useModal } from '../../contexts';
+import type { FullOfferType } from '../../const/type';
+
+
+const mockUseModal = vi.mocked(useModal);
+
+describe('ModalContainer', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns null when modalState is null', () => {
+    mockUseModal.mockReturnValue({
+      modalState: null,
+      openModal: vi.fn(),
+      closeModal: vi.fn(),
+    });
+
+    const { container } = render(<ModalContainer />);
+
+    expect(container.firstChild).toBeNull();
+  });
+
+  it('renders AddToCartModal for add-to-cart type', () => {
+    const productData: Partial<FullOfferType> = {
+      id: 1,
+      name: 'Test Camera',
+      vendorCode: 'TEST123',
+      type: 'Цифровая',
+      category: 'Фотокамера',
+      level: 'Нулевой',
+      description: 'Test description',
+      price: 1000,
+      previewImg: 'test.jpg',
+      previewImg2x: 'test@2x.jpg',
+      previewImgWebp: 'test.webp',
+      previewImgWebp2x: 'test@2x.webp',
+      rating: 4.5,
+      reviewCount: 10,
+    };
+
+    mockUseModal.mockReturnValue({
+      modalState: {
+        type: 'add-to-cart',
+        productData: productData as FullOfferType,
+      },
+      openModal: vi.fn(),
+      closeModal: vi.fn(),
+    });
+
+    render(<ModalContainer />);
+
+    expect(screen.getByTestId('add-to-cart-modal')).toBeInTheDocument();
+  });
+
+  it('renders SuccessAddCartModal for success-add-cart type', () => {
+    mockUseModal.mockReturnValue({
+      modalState: {
+        type: 'success-add-cart',
+      },
+      openModal: vi.fn(),
+      closeModal: vi.fn(),
+    });
+
+    render(<ModalContainer />);
+
+    expect(screen.getByTestId('success-add-cart-modal')).toBeInTheDocument();
+  });
+});

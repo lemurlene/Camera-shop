@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { memo, useCallback, useMemo } from 'react';
+import { memo } from 'react';
 import { ButtonBuyMemo } from '../buttons';
 import RateMemo from '../rate';
 import { FullOfferType } from '../../const/type';
@@ -8,10 +8,9 @@ import { AppRoute } from '../../const/enum';
 type CardProps = {
   card: FullOfferType;
   isSlide?: boolean;
-  handleHover?: (id: number | null) => void;
 }
 
-function Card({ card, handleHover, isSlide = false }: CardProps): JSX.Element {
+function Card({ card, isSlide = false }: CardProps): JSX.Element {
   const {
     id,
     name,
@@ -26,25 +25,8 @@ function Card({ card, handleHover, isSlide = false }: CardProps): JSX.Element {
 
   const cardClassName = `product-card${isSlide ? ' is-active' : ''}`;
 
-  const handleMouseEnter = useCallback(() => {
-    handleHover?.(id);
-  }, [handleHover, id]);
-
-  const handleMouseLeave = useCallback(() => {
-    handleHover?.(null);
-  }, [handleHover]);
-
-  const eventHandlers = useMemo(() => (
-    handleHover ? {
-      onMouseEnter: handleMouseEnter,
-      onMouseLeave: handleMouseLeave
-    } : {}
-  ), [handleHover, handleMouseEnter, handleMouseLeave]);
-
   return (
-    <div className={cardClassName}
-      {...eventHandlers}
-    >
+    <div className={cardClassName}>
       <div className="product-card__img">
         <Link to={`${AppRoute.Catalog}/${id}?tab=description`}>
           <picture>

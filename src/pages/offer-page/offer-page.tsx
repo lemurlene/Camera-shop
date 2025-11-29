@@ -72,7 +72,7 @@ function OfferPageContent() {
   const isEmptyOffersSimilar = offersSimilar.length === 0;
 
   return (
-    <div className="page-content">
+    <div className="page-content" data-testid="offer-page">
       <Breadcrumbs productName={offer.name} />
       <div className="page-content__section">
         <Offer offer={offer} />

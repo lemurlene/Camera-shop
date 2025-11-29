@@ -26,7 +26,7 @@ const TypeFilter = (): JSX.Element => {
     currentType.includes(typeKey);
 
   return (
-    <fieldset className="catalog-filter__block">
+    <fieldset className="catalog-filter__block" data-testid="type-filter">
       <legend className="title title--h5">Тип камеры</legend>
       {TYPE_KEYS.map((typeKey) => (
         <div key={typeKey} className="custom-checkbox catalog-filter__item">

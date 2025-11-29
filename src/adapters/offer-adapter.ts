@@ -1,7 +1,7 @@
 import { FullOfferType, LevelValue, TypeValue } from '../const/type';
 import { normalizeImagePath } from './utils';
 
-type ServerOffer = {
+export type ServerOffer = {
   id: number;
   category: string;
   name: string;

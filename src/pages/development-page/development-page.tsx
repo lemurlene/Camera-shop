@@ -4,7 +4,7 @@ import Breadcrumbs from '../../components/breadcrumbs';
 
 function DevelopmentPage(): JSX.Element {
   return (
-    <div className="page-content">
+    <div className="page-content" data-testid="development-page">
       <Breadcrumbs />
       <div className="container">
         <h1 className="title title--h2">Cтраница в разработке</h1>

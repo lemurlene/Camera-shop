@@ -18,7 +18,7 @@ function Sort(): JSX.Element {
 
   return (
     <div className="catalog-sort">
-      <form action="#">
+      <form action="#" role="form">
         <div className="catalog-sort__inner">
           <p className="title title--h5">Сортировать:</p>
           <div className="catalog-sort__type">

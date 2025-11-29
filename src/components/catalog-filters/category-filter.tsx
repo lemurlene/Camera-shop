@@ -19,7 +19,7 @@ const CategoryFilter = (): JSX.Element => {
   }, [handleCategoryChange]);
 
   return (
-    <fieldset className="catalog-filter__block">
+    <fieldset className="catalog-filter__block" data-testid="category-filter">
       <legend className="title title--h5">Категория</legend>
       {CATEGORY_KEYS.map((categoryKey) => (
         <div key={categoryKey} className="custom-radio catalog-filter__item">

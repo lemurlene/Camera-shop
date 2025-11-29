@@ -46,7 +46,7 @@ function MainPageContent(): JSX.Element {
   return (
     <>
       <BannerPromo offersPromo={offersPromo} />
-      <div className="page-content">
+      <div className="page-content" data-testid="main-page">
         <Breadcrumbs />
         <section className="catalog">
           <div className="container">

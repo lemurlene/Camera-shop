@@ -29,7 +29,7 @@ function Reviews({ comments }: GetReviewProps): JSX.Element {
   const visibleReviews = getVisibleReviews(sortedReviews, visibleReviewsCount);
 
   return (
-    <section className="review-block">
+    <section className="review-block" data-testid="reviews-section">
       <div className="container">
         <ReviewsHeader />
         <ReviewsList reviews={visibleReviews} />

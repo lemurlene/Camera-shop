@@ -30,7 +30,7 @@ const CatalogFilters = ({ priceRange }: CatalogFiltersProps): JSX.Element => {
 
   return (
     <div className="catalog-filter">
-      <form action="#" onSubmit={(e) => e.preventDefault()}>
+      <form action="#" onSubmit={(e) => e.preventDefault()} role="form">
         <h2 className="visually-hidden">Фильтр</h2>
         <PriceFilterMemo priceRange={priceRange} />
         <CategoryFilterMemo />

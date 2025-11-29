@@ -108,7 +108,12 @@ const PriceFilter = ({ priceRange }: PriceFilterProps): JSX.Element => {
   }, [maxPrice]);
 
   return (
-    <fieldset className="catalog-filter__block">
+    <fieldset
+      className="catalog-filter__block"
+      data-testid="price-filter"
+      data-min={priceRange.min.toString()}
+      data-max={priceRange.max.toString()}
+    >
       <legend className="title title--h5">Цена, ₽</legend>
       <div className="catalog-filter__price-range">
         <div className="custom-input">

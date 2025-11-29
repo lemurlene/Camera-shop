@@ -10,13 +10,6 @@ export enum AppRoute {
   Error404 = '*',
 }
 
-export enum LoadingStatus {
-  Idle = 'IDLE',
-  Loading = 'LOADING',
-  Success = 'SUCCESS',
-  Error = 'ERROR'
-}
-
 export enum APIRoute {
   Offers = '/cameras',
   OffersPromo = '/promo',
