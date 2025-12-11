@@ -30,7 +30,13 @@ export const NAV_ITEMS: NavItemType[] = [
     label: 'Доставка',
     to: AppRoute.Delivery,
     exact: true,
-  }
+  },
+  {
+    key: 'delivery',
+    label: 'О компании',
+    to: AppRoute.About,
+    exact: true,
+  },
 ];
 
 export const NAV_CLASSES = {

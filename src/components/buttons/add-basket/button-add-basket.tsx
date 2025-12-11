@@ -1,41 +1,41 @@
-import { memo, useMemo } from 'react';
-import cn from 'classnames';
+import { memo } from 'react';
 import { ButtonAddBasketConfig } from './const';
-import { useModal } from '../../../contexts';
+import { useModal, useCart } from '../../../contexts';
+import { FullOfferType } from '../../../const/type';
 
 type ButtonAddBasketProps = {
-  isInCart?: boolean;
-  isModal?: boolean;
+  productId: number;
+  productData: FullOfferType;
+  quantity?: number;
 }
 
-function ButtonAddBasket({ isInCart = false, isModal = false }: ButtonAddBasketProps): JSX.Element {
-
-  const { buttonText, buttonIcon, buttonModalClass } = useMemo(() => (
-    isInCart ? ButtonAddBasketConfig.InCart : ButtonAddBasketConfig.AddToCart
-  ), [isInCart]);
-
-  const buttonClasses = cn(
-    'btn btn--purple',
-    {
-      [buttonModalClass]: isModal && buttonModalClass
-    }
-  );
-
+function ButtonAddBasket({
+  productId,
+  productData,
+  quantity = 1
+}: ButtonAddBasketProps): JSX.Element {
+  const { buttonText, buttonIcon, buttonClass } = ButtonAddBasketConfig.AddToCart;
   const { openModal } = useModal();
+  const { addToCart, isInCart, updateQuantity, getItemQuantity } = useCart();
 
   const handleClick = () => {
-    openModal('success-add-cart');
+    if (!isInCart(productId)) {
+      addToCart(productId, productData, quantity);
+    } else {
+      const currentQuantity = getItemQuantity(productId);
+      updateQuantity(productId, currentQuantity + quantity);
+    } openModal('success-add-cart');
   };
 
   return (
     <button
-      className={buttonClasses}
+      className={buttonClass}
       type="button"
       onClick={handleClick}
     >
-      {!isInCart && buttonIcon}
+      {buttonIcon}
       {buttonText}
-    </button >
+    </button>
   );
 }
 

@@ -1,19 +1,31 @@
 import { memo, useMemo } from 'react';
 import cn from 'classnames';
 import { ButtonBuyConfig } from './const';
-import { useModal } from '../../../contexts';
+import { useModal, useCart } from '../../../contexts';
 import { FullOfferType } from '../../../const/type';
 
 type ButtonBuyProps = {
-  isInCart?: boolean;
+  isOffer?: boolean;
   product: FullOfferType;
 }
 
-function ButtonBuy({ isInCart = false, product }: ButtonBuyProps): JSX.Element {
+function ButtonBuy({ isOffer = false, product }: ButtonBuyProps): JSX.Element {
+  const { isInCart } = useCart();
+  const inCart = isInCart(product.id);
 
-  const { buttonClass, buttonText, buttonIcon } = useMemo(() => (
-    isInCart ? ButtonBuyConfig.InCart : ButtonBuyConfig.Buy
-  ), [isInCart]);
+  const buttonConfig = useMemo(() => {
+    if (isOffer) {
+      return ButtonBuyConfig.AddToCart;
+    }
+
+    if (inCart) {
+      return ButtonBuyConfig.InCart;
+    }
+
+    return ButtonBuyConfig.Buy;
+  }, [isOffer, inCart]);
+
+  const { buttonClass, buttonText, buttonIcon } = buttonConfig;
 
   const buttonClasses = cn(
     'btn product-card__btn',
@@ -32,7 +44,7 @@ function ButtonBuy({ isInCart = false, product }: ButtonBuyProps): JSX.Element {
       type="button"
       onClick={handleClick}
     >
-      {isInCart && buttonIcon}
+      {buttonIcon}
       {buttonText}
     </button >
   );

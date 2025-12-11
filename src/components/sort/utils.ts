@@ -7,7 +7,7 @@ const sortBy = {
     return order === 'desc' ? sorted.reverse() : sorted;
   },
   Popular: (offers: FullOfferType[], order: SortOrder): FullOfferType[] => {
-    const sorted = [...offers].sort((a, b) => b.rating - a.rating);
+    const sorted = [...offers].sort((a, b) => a.rating - b.rating);
     return order === 'desc' ? sorted.reverse() : sorted;
   },
 };

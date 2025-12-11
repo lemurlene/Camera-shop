@@ -88,25 +88,6 @@ describe('BasketCard component', () => {
     expect(screen.getByText('1 000 000 ₽')).toBeInTheDocument();
   });
 
-  it('renders children when provided', () => {
-    const TestChild = () => <div data-testid="test-child">Test Child</div>;
-
-    render(
-      <BasketCard card={mockCard}>
-        <TestChild />
-      </BasketCard>
-    );
-
-    expect(screen.getByTestId('test-child')).toBeInTheDocument();
-    expect(screen.getByText('Test Child')).toBeInTheDocument();
-  });
-
-  it('renders without children', () => {
-    render(<BasketCard card={mockCard} />);
-
-    expect(screen.getByText(mockCard.name)).toBeInTheDocument();
-  });
-
   it('has visually hidden text for price', () => {
     render(<BasketCard card={mockCard} />);
 

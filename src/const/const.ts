@@ -6,6 +6,7 @@ export const Setting = {
   ProductSimilarCount: 3,
   MaxShowReviews: 3,
   MaxShowPromo: 3,
+  MaxProductQuantity: 9,
 } as const;
 
 export const RouteNames = {

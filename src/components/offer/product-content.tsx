@@ -1,18 +1,21 @@
 import RateMemo from '../rate';
-import { ButtonAddBasketMemo } from '../buttons';
+import { ButtonBuyMemo } from '../buttons';
+import { FullOfferType } from '../../const/type';
 
 type ProductContentProps = {
   name: string;
   rating: number;
   reviewCount: number;
   price: number;
+  offer: FullOfferType;
 };
 
 export const ProductContent = ({
   name,
   rating,
   reviewCount,
-  price
+  price,
+  offer
 }: ProductContentProps): JSX.Element => (
   <>
     <h1 className="title title--h3">{name}</h1>
@@ -21,6 +24,6 @@ export const ProductContent = ({
       <span className="visually-hidden">Цена:</span>
       {price.toLocaleString()}&nbsp;&#8381;
     </p>
-    <ButtonAddBasketMemo />
+    <ButtonBuyMemo isOffer product={offer} />
   </>
 );

@@ -1,13 +1,12 @@
-import { memo, ReactNode } from 'react';
+import { memo } from 'react';
 import { FullOfferType } from '../../const/type';
 
 type BasketCardProps = {
   card: FullOfferType;
   isModal?: boolean;
-  children?: ReactNode;
 }
 
-function BasketCard({ card, isModal = false, children }: BasketCardProps): JSX.Element {
+function BasketCard({ card, isModal = false }: BasketCardProps): JSX.Element {
   const {
     name,
     vendorCode,
@@ -58,7 +57,6 @@ function BasketCard({ card, isModal = false, children }: BasketCardProps): JSX.E
         {isModal && blockPrice}
       </div>
       {!isModal && blockPrice}
-      {children}
     </>
   );
 }

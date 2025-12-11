@@ -48,6 +48,7 @@ function Offer({ offer }: OfferProps): JSX.Element {
             rating={rating}
             reviewCount={reviewCount}
             price={price}
+            offer={offer}
           />
           <ProductTabs
             activeTab={activeTab}

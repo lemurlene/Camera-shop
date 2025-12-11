@@ -73,19 +73,17 @@ describe('sortOffers', () => {
   it('should sort by popularity in ascending order (lowest rating first)', () => {
     const result = sortOffers(mockOffers, 'Popular', 'asc');
 
-    // По возрастанию: от низкого рейтинга к высокому
-    expect(result[0].rating).toBe(4.5); // Самый высокий рейтинг
+    expect(result[0].rating).toBe(4.5);
     expect(result[1].rating).toBe(4.0);
-    expect(result[2].rating).toBe(3.0); // Самый низкий рейтинг
+    expect(result[2].rating).toBe(3.0);
   });
 
   it('should sort by popularity in descending order (highest rating first)', () => {
     const result = sortOffers(mockOffers, 'Popular', 'desc');
 
-    // По убыванию: от высокого рейтинга к низкому
-    expect(result[0].rating).toBe(3.0); // Самый низкий рейтинг
+    expect(result[0].rating).toBe(3.0);
     expect(result[1].rating).toBe(4.0);
-    expect(result[2].rating).toBe(4.5); // Самый высокий рейтинг
+    expect(result[2].rating).toBe(4.5);
   });
 
   it('should not mutate original array', () => {

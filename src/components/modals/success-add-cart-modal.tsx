@@ -1,6 +1,6 @@
 import { useModal } from '../../contexts';
 import { Modal } from './modal';
-import { ButtonAddBasketMemo } from '../buttons';
+import { ButtonContinueShoppingMemo, ButtonGoBasketMemo } from '../buttons';
 
 export const SuccessAddCartModal: React.FC = () => {
   const { closeModal } = useModal();
@@ -12,10 +12,8 @@ export const SuccessAddCartModal: React.FC = () => {
         <use xlinkHref="#icon-success"></use>
       </svg>
       <div className="modal__buttons">
-        <button className="btn btn--transparent modal__btn" onClick={closeModal}>
-          Продолжить покупки
-        </button>
-        <ButtonAddBasketMemo isModal isInCart />
+        <ButtonContinueShoppingMemo />
+        <ButtonGoBasketMemo />
       </div>
     </Modal>
   );

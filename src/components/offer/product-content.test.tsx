@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { ProductContent } from './product-content';
+import { mockOffers } from '../../mocks/mock-offers';
 
 const { mockRateMemo, mockButtonAddBasketMemo } = vi.hoisted(() => ({
   mockRateMemo: vi.fn(),
@@ -21,6 +22,7 @@ describe('ProductContent', () => {
     rating: 4.5,
     reviewCount: 10,
     price: 100000,
+    offer: mockOffers[0],
   };
 
   beforeEach(() => {
@@ -96,6 +98,7 @@ describe('ProductContent', () => {
       rating: 3.2,
       reviewCount: 5,
       price: 75000,
+      offer: mockOffers[2],
     };
 
     render(<ProductContent {...differentProps} />);

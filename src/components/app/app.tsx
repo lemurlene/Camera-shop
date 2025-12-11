@@ -8,12 +8,13 @@ import LoadingPage from '../../pages/loading-page';
 import OfferPage from '../../pages/offer-page';
 import NotFoundPage from '../../pages/not-found-page';
 import DevelopmentPage from '../../pages/development-page';
+import BasketPage from '../../pages/basket-page';
 import { fetchOffers, fetchOffersPromo } from '../../store/api-action';
 import { AppRoute } from '../../const/enum';
 import { useAppSelector, useAppDispatch } from '../../hooks';
 import { setErrorConnectionOffers, selectErrorConnectionOffers } from '../../store/offers';
 import { setErrorConnectionOffersPromo } from '../../store/offers-promo';
-import { UrlProvider } from '../../contexts/';
+import { UrlProvider, CartProvider } from '../../contexts/';
 
 function App(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -59,45 +60,47 @@ function App(): JSX.Element {
     <HelmetProvider>
       <BrowserRouter>
         <UrlProvider>
-          {isServerError ? (
-            <ErrorServer mainPage />
-          ) : (
-            <Routes>
-              <Route path={AppRoute.Root} element={<Layout />}>
-                {!isInitialized ? (
-                  <Route index element={<LoadingPage />} />
-                ) : (
-                  <>
-                    <Route index element={<MainPage />} />
-                    <Route
-                      path={AppRoute.Catalog}
-                      element={<MainPage />}
-                    />
-                    <Route
-                      path={AppRoute.Offer}
-                      element={<OfferPage />}
-                    />
-                    <Route
-                      path={AppRoute.Error404}
-                      element={<NotFoundPage />}
-                    />
-                    <Route
-                      path={AppRoute.Guarantees}
-                      element={<DevelopmentPage />}
-                    />
-                    <Route
-                      path={AppRoute.Delivery}
-                      element={<DevelopmentPage />}
-                    />
-                    <Route
-                      path={AppRoute.Basket}
-                      element={<DevelopmentPage />}
-                    />
-                  </>
-                )}
-              </Route>
-            </Routes>
-          )}
+          <CartProvider>
+            {isServerError ? (
+              <ErrorServer mainPage />
+            ) : (
+              <Routes>
+                <Route path={AppRoute.Root} element={<Layout />}>
+                  {!isInitialized ? (
+                    <Route index element={<LoadingPage />} />
+                  ) : (
+                    <>
+                      <Route index element={<MainPage />} />
+                      <Route
+                        path={AppRoute.Catalog}
+                        element={<MainPage />}
+                      />
+                      <Route
+                        path={AppRoute.Offer}
+                        element={<OfferPage />}
+                      />
+                      <Route
+                        path={AppRoute.Error404}
+                        element={<NotFoundPage />}
+                      />
+                      <Route
+                        path={AppRoute.Guarantees}
+                        element={<DevelopmentPage />}
+                      />
+                      <Route
+                        path={AppRoute.Delivery}
+                        element={<DevelopmentPage />}
+                      />
+                      <Route
+                        path={AppRoute.Basket}
+                        element={<BasketPage />}
+                      />
+                    </>
+                  )}
+                </Route>
+              </Routes>
+            )}
+          </CartProvider>
         </UrlProvider>
       </BrowserRouter>
     </HelmetProvider >
