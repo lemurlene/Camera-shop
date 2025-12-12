@@ -1,34 +1,39 @@
 import { memo } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
+import cn from 'classnames';
 import { ButtonContinueShoppingConfig } from './const';
 import { AppRoute } from '../../../const/enum';
 import { useModal } from '../../../contexts';
 
-function ButtonContinueShopping(): JSX.Element {
-  const navigate = useNavigate();
+type ButtonContinueProps = {
+  isHalfWidth?: boolean;
+}
+
+
+function ButtonContinueShopping({ isHalfWidth = false }: ButtonContinueProps): JSX.Element {
   const location = useLocation();
   const { closeModal } = useModal();
 
   const catalogPath = AppRoute.Catalog;
 
-  const { buttonText, buttonIcon, buttonClass } = ButtonContinueShoppingConfig.GoToCatalog;
+  const { buttonText, buttonIcon, buttonClass, buttonClassHalfWidth } = ButtonContinueShoppingConfig.GoToCatalog;
 
   const handleClick = () => {
     closeModal();
-    if (location.pathname !== catalogPath) {
-      navigate(catalogPath);
-    }
   };
 
+  const targetPath = location.pathname !== catalogPath ? catalogPath : '';
+
   return (
-    <button
-      className={buttonClass}
-      type="button"
+    <Link
+      to={targetPath}
+      className={cn(buttonClass,
+        { [buttonClassHalfWidth]: isHalfWidth })}
       onClick={handleClick}
     >
       {buttonIcon}
       {buttonText}
-    </button >
+    </Link>
   );
 }
 

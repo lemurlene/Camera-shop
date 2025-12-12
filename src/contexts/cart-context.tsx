@@ -6,6 +6,7 @@ type CartContextType = {
   addToCart: (id: number, data: CartItem['data'], quantity?: number) => void;
   removeFromCart: (id: number) => void;
   updateQuantity: (id: number, quantity: number) => void;
+  clearCart: () => void;
   getTotalQuantity: () => number;
   getTotalPrice: () => number;
   isInCart: (id: number) => boolean;
@@ -77,6 +78,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     );
   };
 
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
   const getTotalQuantity = () => cartItems.reduce((sum, cartItem) => sum + cartItem.quantity, 0);
 
   const getTotalPrice = () => cartItems.reduce((sum, cartItem) => {
@@ -98,6 +103,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     addToCart,
     removeFromCart,
     updateQuantity,
+    clearCart,
     getTotalQuantity,
     getTotalPrice,
     isInCart,

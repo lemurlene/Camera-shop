@@ -8,5 +8,7 @@ export const NameSpace = {
   OffersPromo: 'PROMO',
   OffersSimilar: 'SIMILAR',
   Reviews: 'REVIEWS',
-  Error: 'ERROR'
+  Error: 'ERROR',
+  Coupon: 'COUPON',
+  Order: 'ORDER',
 } as const;

@@ -4,9 +4,10 @@ import { FullOfferType } from '../../const/type';
 type BasketCardProps = {
   card: FullOfferType;
   isModal?: boolean;
+  isHidePrice?: boolean;
 }
 
-function BasketCard({ card, isModal = false }: BasketCardProps): JSX.Element {
+function BasketCard({ card, isModal = false, isHidePrice = false }: BasketCardProps): JSX.Element {
   const {
     name,
     vendorCode,
@@ -54,9 +55,9 @@ function BasketCard({ card, isModal = false }: BasketCardProps): JSX.Element {
           <li className="basket-item__list-item">{type} {category.toLowerCase()}</li>
           <li className="basket-item__list-item">{level} уровень</li>
         </ul>
-        {isModal && blockPrice}
+        {isModal && !isHidePrice && blockPrice}
       </div>
-      {!isModal && blockPrice}
+      {!isModal && !isHidePrice && blockPrice}
     </>
   );
 }

@@ -42,4 +42,14 @@ export const makeFakeStore = (initialState?: Partial<State>): State => ({
     error: null,
   },
   ...initialState,
+  COUPON: {
+    coupon: null,
+    discount: 0,
+    status: 'idle',
+    error: null,
+  },
+  ORDER: {
+    status: 'idle',
+    error: null,
+  }
 });

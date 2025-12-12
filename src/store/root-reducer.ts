@@ -8,6 +8,8 @@ import { offerSlice } from './offer/offer.slice';
 import { offersPromoSlice } from './offers-promo/offers-promo.slice';
 import { offersSimilarSlice } from './offers-similar/offers-similar.slice';
 import reviewsSlice from './reviews/reviews.slice';
+import { couponSlice } from './promo-code/promo-code.slice';
+import { orderSlice } from './order/order.slice';
 
 const rootReducer = combineReducers({
   [NameSpace.Filters]: filtersSlice.reducer,
@@ -18,6 +20,8 @@ const rootReducer = combineReducers({
   [NameSpace.OffersPromo]: offersPromoSlice.reducer,
   [NameSpace.OffersSimilar]: offersSimilarSlice.reducer,
   [NameSpace.Reviews]: reviewsSlice.reducer,
+  [NameSpace.Coupon]: couponSlice.reducer,
+  [orderSlice.name]: orderSlice.reducer,
 });
 
 export default rootReducer;

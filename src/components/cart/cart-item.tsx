@@ -33,7 +33,7 @@ export const CartItem: React.FC<CartItemProps> = ({ item }) => {
   };
 
   const handleRemove = () => {
-    openModal('delete-from-cart');
+    openModal('delete-from-cart', item.data);
   };
 
   return (

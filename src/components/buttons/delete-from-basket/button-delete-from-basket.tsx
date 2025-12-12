@@ -10,12 +10,12 @@ function ButtonDeleteFromBasket({
   productId
 }: ButtonDeleteFromBasketProps): JSX.Element {
   const { buttonText, buttonIcon, buttonClass } = ButtonDeleteFromBasketConfig.DeleteFromCart;
-  const { openModal } = useModal();
+  const { closeModal } = useModal();
   const { removeFromCart } = useCart();
 
   const handleClick = () => {
     removeFromCart(productId);
-    openModal('success-add-cart');
+    closeModal();
   };
 
   return (

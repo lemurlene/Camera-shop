@@ -10,6 +10,7 @@ const createAppAsyncThunk = createAsyncThunk.withTypes<{
   state: State;
   dispatch: AppDispatch;
   extra: AxiosInstance;
+  rejectValue: string;
 }>();
 
 export { useAppDispatch, useAppSelector, createAppAsyncThunk };

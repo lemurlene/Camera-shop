@@ -57,3 +57,16 @@ export type ReviewType = {
   review: string;
   rating: number;
 }
+
+export type CouponResponse = {
+  data: number;
+};
+
+export type OrderRequestData = {
+  camerasIds: number[];
+  coupon?: string | null;
+};
+
+export type ErrorResponse = {
+  messages?: string[];
+};
