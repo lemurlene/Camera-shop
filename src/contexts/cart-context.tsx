@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { CartItem, isValidCartItemArray } from '../components/cart/types';
 
 type CartContextType = {
@@ -78,9 +78,9 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     );
   };
 
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setCartItems([]);
-  };
+  }, []);
 
   const getTotalQuantity = () => cartItems.reduce((sum, cartItem) => sum + cartItem.quantity, 0);
 

@@ -5,4 +5,11 @@ export const ButtonContinueShoppingConfig = {
     buttonText: 'Продолжить покупки',
     buttonIcon: '',
   },
+  BackToCatalog: {
+    buttonClass: 'btn btn--purple modal__btn modal__btn--fit-width',
+    buttonClassHalfWidth: '',
+    buttonText: 'Вернуться к покупкам',
+    buttonIcon: '',
+  },
 };
+

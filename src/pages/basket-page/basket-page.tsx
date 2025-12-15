@@ -5,12 +5,19 @@ import { CartItem } from '../../components/cart';
 import LoaderOverlay from '../../components/loader-overlay';
 import FormPromoCodeMemo from '../../components/form-promo-code';
 import { useCart, useModal } from '../../contexts';
-import { selectCoupon, selectDiscount, setDiscount, setCoupon, selectIsCouponLoading } from '../../store/promo-code';
+import {
+  selectCoupon,
+  selectDiscount,
+  setDiscount, setCoupon,
+  resetCoupon,
+  selectIsCouponLoading
+} from '../../store/promo-code';
 import {
   selectOrderError,
   selectIsOrderLoading,
   selectIsOrderSucceeded,
   selectIsOrderFailed,
+  resetOrder
 } from '../../store/order';
 import { sendOrder } from '../../store/api-action';
 
@@ -74,11 +81,15 @@ function BasketPage(): JSX.Element {
   }, [coupon, discountPercent]);
 
   useEffect(() => {
-    if (isOrderSucceeded) {
-      clearCart();
-      openModal('success-order');
+    if (!isOrderSucceeded) {
+      return;
     }
-  }, [isOrderSucceeded, clearCart, openModal]);
+
+    clearCart();
+    dispatch(resetCoupon());
+    openModal('success-order');
+    dispatch(resetOrder());
+  }, [isOrderSucceeded, clearCart, openModal, dispatch]);
 
   useEffect(() => {
     if (isOrderFailed && orderError) {

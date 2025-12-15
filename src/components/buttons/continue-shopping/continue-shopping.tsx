@@ -1,5 +1,5 @@
-import { memo } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useMemo, memo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import cn from 'classnames';
 import { ButtonContinueShoppingConfig } from './const';
 import { AppRoute } from '../../../const/enum';
@@ -7,33 +7,41 @@ import { useModal } from '../../../contexts';
 
 type ButtonContinueProps = {
   isHalfWidth?: boolean;
+  isOrder?: boolean;
 }
 
-
-function ButtonContinueShopping({ isHalfWidth = false }: ButtonContinueProps): JSX.Element {
+function ButtonContinueShopping({ isHalfWidth = false, isOrder = false }: ButtonContinueProps): JSX.Element {
   const location = useLocation();
+  const navigate = useNavigate();
   const { closeModal } = useModal();
 
   const catalogPath = AppRoute.Catalog;
 
-  const { buttonText, buttonIcon, buttonClass, buttonClassHalfWidth } = ButtonContinueShoppingConfig.GoToCatalog;
+  const buttonConfig = useMemo(() => {
+    if (isOrder) {
+      return ButtonContinueShoppingConfig.BackToCatalog;
+    }
+    return ButtonContinueShoppingConfig.GoToCatalog;
+  }, [isOrder]);
+
+  const { buttonText, buttonIcon, buttonClass, buttonClassHalfWidth } = buttonConfig;
 
   const handleClick = () => {
     closeModal();
+    if (location.pathname !== catalogPath) {
+      navigate(catalogPath);
+    }
   };
 
-  const targetPath = location.pathname !== catalogPath ? catalogPath : '';
-
   return (
-    <Link
-      to={targetPath}
+    <button
       className={cn(buttonClass,
         { [buttonClassHalfWidth]: isHalfWidth })}
       onClick={handleClick}
     >
       {buttonIcon}
       {buttonText}
-    </Link>
+    </button>
   );
 }
 

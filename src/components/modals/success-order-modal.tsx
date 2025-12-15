@@ -13,7 +13,7 @@ export const SuccessOrderModal: React.FC = () => {
         <use xlinkHref="#icon-review-success"></use>
       </svg>
       <div className="modal__buttons">
-        <ButtonContinueShoppingMemo />
+        <ButtonContinueShoppingMemo isOrder/>
       </div>
     </Modal>
   );

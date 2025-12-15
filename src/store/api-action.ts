@@ -1,4 +1,4 @@
-import { AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 import { FullOfferType, OfferPromoType, ReviewType, OrderRequestData, ErrorResponse } from '../const/type';
 import { APIRoute } from '../const/enum';
 import { NameSpace } from './const';
@@ -44,18 +44,24 @@ const fetchOfferComments = createAppAsyncThunk<ReviewType[], string>(
   }
 );
 
-const checkCoupon = createAppAsyncThunk<number, string>(
+const checkCoupon = createAppAsyncThunk<number, string, { rejectValue: string }>(
   `${NameSpace.Coupon}/checkCoupon`,
   async (coupon, { extra: api, rejectWithValue }) => {
-    try {
-      const cleanedCoupon = coupon.trim().replace(/\s/g, '');
-      const { data } = await api.post<number>(APIRoute.Coupons, {
-        coupon: cleanedCoupon
-      });
+    const cleanedCoupon = coupon.trim().replace(/\s/g, '');
 
+    try {
+      const { data } = await api.post<number>(APIRoute.Coupons, { coupon: cleanedCoupon });
       return data;
-    } catch (error) {
-      return rejectWithValue('Неверный промокод');
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const status = err.response?.status;
+
+        if (status === 400) {
+          return rejectWithValue('Неверный промокод');
+        }
+        return rejectWithValue('Попробуйте ещё раз.');
+      }
+      return rejectWithValue('Попробуйте ещё раз.');
     }
   }
 );
@@ -64,18 +70,10 @@ const sendOrder = createAppAsyncThunk<void, OrderRequestData>(
   `${NameSpace.Order}/sendOrder`,
   async (orderData, { extra: api, rejectWithValue }) => {
     try {
-      let coupon = orderData.coupon;
-      if (coupon) {
-        coupon = coupon.trim().replace(/\s/g, '');
-        const validCoupons = ['camera-333', 'camera-444', 'camera-555'] as const;
-        if (!validCoupons.includes(coupon as typeof validCoupons[number])) {
-          coupon = null;
-        }
-      }
-
+      const coupon = orderData.coupon ? orderData.coupon.trim().replace(/\s/g, '') : null;
       const requestData = {
         camerasIds: orderData.camerasIds,
-        ...(coupon && { coupon })
+        ...(coupon ? { coupon } : {}),
       };
       await api.post(APIRoute.Orders, requestData);
 

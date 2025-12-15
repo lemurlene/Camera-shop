@@ -28,13 +28,12 @@ function FormPromoCode() {
       return;
     }
 
-    // Обрабатываем изменения статуса
     if (status === 'loading') {
       setLocalError(null);
       setLocalSuccess(null);
     } else if (status === 'succeeded') {
       setLocalError(null);
-      setLocalSuccess(`Промокод принят! Скидка ${discount}%`);
+      setLocalSuccess('Промокод принят!');
     } else if (status === 'failed') {
       setLocalError(error || 'Неверный промокод');
       setLocalSuccess(null);
@@ -42,21 +41,19 @@ function FormPromoCode() {
   }, [status, discount, error]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+    const value = e.target.value.replace(/\s/g, '');
     setPromoCode(value);
 
-    // Сбрасываем ошибки при вводе
-    if (localError || localSuccess) {
-      setLocalError(null);
-      setLocalSuccess(null);
+    if (coupon || discount > 0 || localError || localSuccess) {
       dispatch(resetCoupon());
     }
+
+    setLocalError(null);
+    setLocalSuccess(null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Очищаем промокод
     const cleanedPromoCode = promoCode.trim().replace(/\s/g, '');
 
     if (!cleanedPromoCode) {
@@ -82,7 +79,7 @@ function FormPromoCode() {
               <input
                 type="text"
                 name="promo"
-                placeholder="camera-333, camera-444 или camera-555"
+                placeholder="Введите промокод"
                 value={promoCode}
                 onChange={handleInputChange}
                 disabled={isLoading}
