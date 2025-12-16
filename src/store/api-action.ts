@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { FullOfferType, OfferPromoType, ReviewType, OrderRequestData, ErrorResponse } from '../const/type';
+import { FullOfferType, OfferPromoType, ReviewType, OrderRequestData, ErrorResponse, CommentType } from '../const/type';
 import { APIRoute } from '../const/enum';
 import { NameSpace } from './const';
 import { createAppAsyncThunk } from '../hooks';
@@ -94,6 +94,14 @@ const sendOrder = createAppAsyncThunk<void, OrderRequestData>(
   }
 );
 
+const postOfferComment = createAppAsyncThunk<ReviewType, CommentType>(
+  `${NameSpace.Reviews}/postOfferComment`,
+  async ({ id, comment }, { extra: api }) => {
+    const { data } = await api.post<ReviewType>(`${APIRoute.Comments}/${id}`, { comment: comment.review, rating: +comment.rating });
+    return data;
+  }
+);
+
 export {
   fetchOffers,
   getOfferInfoById,
@@ -101,5 +109,6 @@ export {
   fetchOffersSimilar,
   fetchOfferComments,
   checkCoupon,
-  sendOrder
+  sendOrder,
+  postOfferComment
 };

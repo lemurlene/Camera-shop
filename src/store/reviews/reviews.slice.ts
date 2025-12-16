@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { NameSpace } from '../const';
 import { initialState } from './const';
 
-import { fetchOfferComments } from '../api-action';
+import { fetchOfferComments, postOfferComment } from '../api-action';
 
 
 const reviewsSlice = createSlice({
@@ -22,6 +22,16 @@ const reviewsSlice = createSlice({
           state.offerComments = action.payload;
         }
         state.isLoadingComments = false;
+      })
+      .addCase(postOfferComment.pending, (state) => {
+        state.isLoadingComment = true;
+      })
+      .addCase(postOfferComment.rejected, (state) => {
+        state.isLoadingComment = false;
+      })
+      .addCase(postOfferComment.fulfilled, (state, action) => {
+        state.offerComments = state.offerComments.concat([action.payload]);
+        state.isLoadingComment = false;
       });
   }
 });

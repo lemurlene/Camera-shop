@@ -70,3 +70,11 @@ export type OrderRequestData = {
 export type ErrorResponse = {
   messages?: string[];
 };
+
+export type CommentType = {
+  id: string;
+  comment: {
+    rating: number;
+    review: ReviewType;
+  };
+};

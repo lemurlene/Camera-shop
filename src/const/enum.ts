@@ -15,4 +15,5 @@ export enum APIRoute {
   OffersPromo = '/promo',
   Coupons = '/coupons',
   Orders = '/orders',
+  Comments = '/reviews',
 }

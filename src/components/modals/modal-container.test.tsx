@@ -1,5 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { FullOfferType } from '../../const/type';
+import { ModalContainer } from './modal-container';
+import { useModal } from '../../contexts';
 
 vi.mock('../../contexts', () => ({
   useModal: vi.fn(),
@@ -10,13 +13,22 @@ vi.mock('./add-to-cart-modal', () => ({
 }));
 
 vi.mock('./success-add-cart-modal', () => ({
-  SuccessAddCartModal: vi.fn(() => <div data-testid="success-add-cart-modal">Success</div>),
+  SuccessAddCartModal: vi.fn(() => <div data-testid="success-add-cart-modal">Success Add</div>),
 }));
 
-import { ModalContainer } from './modal-container';
-import { useModal } from '../../contexts';
-import type { FullOfferType } from '../../const/type';
+vi.mock('./delete-from-cart-modal', () => ({
+  DeleteFromCartModal: vi.fn(() => <div data-testid="delete-from-cart-modal">Delete</div>),
+}));
 
+vi.mock('./success-order-modal', () => ({
+  SuccessOrderModal: vi.fn(() => <div data-testid="success-order-modal">Success Order</div>),
+}));
+
+vi.mock('./error-order-modal', () => ({
+  ErrorOrderModal: vi.fn(({ error }: { error: string }) => (
+    <div data-testid="error-order-modal">{error}</div>
+  )),
+}));
 
 const mockUseModal = vi.mocked(useModal);
 
@@ -33,7 +45,6 @@ describe('ModalContainer', () => {
     });
 
     const { container } = render(<ModalContainer />);
-
     expect(container.firstChild).toBeNull();
   });
 
@@ -56,30 +67,81 @@ describe('ModalContainer', () => {
     };
 
     mockUseModal.mockReturnValue({
-      modalState: {
-        type: 'add-to-cart',
-        productData: productData as FullOfferType,
-      },
+      modalState: { type: 'add-to-cart', productData: productData as FullOfferType },
       openModal: vi.fn(),
       closeModal: vi.fn(),
     });
 
     render(<ModalContainer />);
-
     expect(screen.getByTestId('add-to-cart-modal')).toBeInTheDocument();
   });
 
   it('renders SuccessAddCartModal for success-add-cart type', () => {
     mockUseModal.mockReturnValue({
-      modalState: {
-        type: 'success-add-cart',
-      },
+      modalState: { type: 'success-add-cart' },
       openModal: vi.fn(),
       closeModal: vi.fn(),
     });
 
     render(<ModalContainer />);
-
     expect(screen.getByTestId('success-add-cart-modal')).toBeInTheDocument();
+  });
+
+  it('renders DeleteFromCartModal for delete-from-cart type', () => {
+    const productData = ({ id: 2 } as unknown) as FullOfferType;
+
+    mockUseModal.mockReturnValue({
+      modalState: { type: 'delete-from-cart', productData },
+      openModal: vi.fn(),
+      closeModal: vi.fn(),
+    });
+
+    render(<ModalContainer />);
+    expect(screen.getByTestId('delete-from-cart-modal')).toBeInTheDocument();
+  });
+
+  it('renders SuccessOrderModal for success-order type', () => {
+    mockUseModal.mockReturnValue({
+      modalState: { type: 'success-order' },
+      openModal: vi.fn(),
+      closeModal: vi.fn(),
+    });
+
+    render(<ModalContainer />);
+    expect(screen.getByTestId('success-order-modal')).toBeInTheDocument();
+  });
+
+  it('renders ErrorOrderModal for error-order type with provided error', () => {
+    mockUseModal.mockReturnValue({
+      modalState: { type: 'error-order', error: 'Сервер недоступен' },
+      openModal: vi.fn(),
+      closeModal: vi.fn(),
+    });
+
+    render(<ModalContainer />);
+    expect(screen.getByTestId('error-order-modal')).toBeInTheDocument();
+    expect(screen.getByTestId('error-order-modal')).toHaveTextContent('Сервер недоступен');
+  });
+
+  it('renders ErrorOrderModal for error-order type with default error text when error is empty', () => {
+    mockUseModal.mockReturnValue({
+      modalState: { type: 'error-order' },
+      openModal: vi.fn(),
+      closeModal: vi.fn(),
+    });
+
+    render(<ModalContainer />);
+    expect(screen.getByTestId('error-order-modal')).toHaveTextContent('Ошибка при оформлении заказа');
+  });
+
+  it('returns null for unknown modal type', () => {
+    mockUseModal.mockReturnValue({
+      modalState: { type: 'unknown-type' as unknown as 'success-order' },
+      openModal: vi.fn(),
+      closeModal: vi.fn(),
+    });
+
+    const { container } = render(<ModalContainer />);
+    expect(container.firstChild).toBeNull();
   });
 });
