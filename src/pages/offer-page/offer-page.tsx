@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks';
 import { TabSyncWrapper } from '../../components/wrappers';
 import { selectOffer, selectOfferLoading, selectErrorConnection, setErrorConnectionStatusOffer } from '../../store/offer';
 import { selectOffersSimilar, selectOffersSimilarLoading } from '../../store/offers-similar';
-import { selectCommentsOffersStatus, selectOffersComments } from '../../store/reviews';
+import { selectCommentsOffersStatus, selectOffersComments, selectCommentsError } from '../../store/reviews';
 import { Offer } from '../../components/offer';
 import { OffersSimilar } from '../../components/offers-similar';
 import Breadcrumbs from '../../components/breadcrumbs';
@@ -12,6 +12,7 @@ import { getOfferInfoById, fetchOffersSimilar, fetchOfferComments } from '../../
 import LoadingPage from '../loading-page';
 import NotFoundPage from '../not-found-page';
 import ErrorServer from '../../components/error-server';
+import ErrorMessage from '../../components/error-message';
 import { useId } from '../../utils';
 
 function OfferPageContent() {
@@ -29,9 +30,10 @@ function OfferPageContent() {
     selectOffersSimilarLoading(state)
   ]);
 
-  const [comments, isOffersCommentsLoading] = useAppSelector((state) => [
+  const [comments, isOffersCommentsLoading, commentsError] = useAppSelector((state) => [
     selectOffersComments(state),
-    selectCommentsOffersStatus(state)
+    selectCommentsOffersStatus(state),
+    selectCommentsError(state),
   ]);
 
   const loadOfferData = useCallback(async () => {
@@ -79,6 +81,7 @@ function OfferPageContent() {
       </div>
       {!isEmptyOffersSimilar && <OffersSimilar offersSimilar={offersSimilar} />}
       <div className="page-content__section">
+        {commentsError && <ErrorMessage message={commentsError} />}
         <Reviews comments={comments} />
       </div>
     </div>

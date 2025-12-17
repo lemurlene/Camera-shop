@@ -71,10 +71,4 @@ export type ErrorResponse = {
   messages?: string[];
 };
 
-export type CommentType = {
-  id: string;
-  comment: {
-    rating: number;
-    review: ReviewType;
-  };
-};
+export type ReviewPostDto = Omit<ReviewType, 'id' | 'createAt'>;

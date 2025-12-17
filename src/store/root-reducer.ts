@@ -21,7 +21,7 @@ const rootReducer = combineReducers({
   [NameSpace.OffersSimilar]: offersSimilarSlice.reducer,
   [NameSpace.Reviews]: reviewsSlice.reducer,
   [NameSpace.Coupon]: couponSlice.reducer,
-  [orderSlice.name]: orderSlice.reducer,
+  [NameSpace.Order]: orderSlice.reducer,
 });
 
 export default rootReducer;

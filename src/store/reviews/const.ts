@@ -4,4 +4,6 @@ export const initialState: InitialStateType = {
   offerComments: [],
   isLoadingComments: false,
   isLoadingComment: false,
+  commentsError: null,
+  postCommentError: null,
 };

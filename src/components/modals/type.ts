@@ -3,4 +3,6 @@ export type ModalType =
   'success-add-cart' |
   'delete-from-cart' |
   'success-order' |
-  'error-order';
+  'error-order' |
+  'add-review' |
+  'success-review';

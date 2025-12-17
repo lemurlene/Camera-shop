@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { FullOfferType, OfferPromoType, ReviewType, OrderRequestData, ErrorResponse, CommentType } from '../const/type';
+import { FullOfferType, OfferPromoType, ReviewType, OrderRequestData, ErrorResponse, ReviewPostDto } from '../const/type';
 import { APIRoute } from '../const/enum';
 import { NameSpace } from './const';
 import { createAppAsyncThunk } from '../hooks';
@@ -36,11 +36,19 @@ const fetchOffersSimilar = createAppAsyncThunk<FullOfferType[], string>(
   }
 );
 
-const fetchOfferComments = createAppAsyncThunk<ReviewType[], string>(
+const fetchOfferComments = createAppAsyncThunk<
+  ReviewType[],
+  string,
+  { rejectValue: string }
+>(
   `${NameSpace.Reviews}/fetchOfferComments`,
-  async (id, { extra: api }) => {
-    const { data } = await api.get<ReviewType[]>(`${APIRoute.Offers}/${id}/reviews`);
-    return data;
+  async (id, { extra: api, rejectWithValue }) => {
+    try {
+      const { data } = await api.get<ReviewType[]>(`${APIRoute.Offers}/${id}/reviews`);
+      return data;
+    } catch {
+      return rejectWithValue('Не удалось загрузить отзывы');
+    }
   }
 );
 
@@ -94,11 +102,32 @@ const sendOrder = createAppAsyncThunk<void, OrderRequestData>(
   }
 );
 
-const postOfferComment = createAppAsyncThunk<ReviewType, CommentType>(
+
+const postOfferComment = createAppAsyncThunk<
+  ReviewType,
+  ReviewPostDto,
+  { rejectValue: string }
+>(
   `${NameSpace.Reviews}/postOfferComment`,
-  async ({ id, comment }, { extra: api }) => {
-    const { data } = await api.post<ReviewType>(`${APIRoute.Comments}/${id}`, { comment: comment.review, rating: +comment.rating });
-    return data;
+  async (dto, { extra: api, rejectWithValue }) => {
+    try {
+      const payload: ReviewPostDto = {
+        cameraId: dto.cameraId,
+        userName: dto.userName.trim(),
+        advantage: dto.advantage.trim(),
+        disadvantage: dto.disadvantage.trim(),
+        review: dto.review.trim(),
+        rating: dto.rating,
+      };
+
+      const { data } = await api.post<ReviewType>(APIRoute.Comments, payload);
+      return data;
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        return rejectWithValue('Не удалось отправить отзыв. Попробуйте ещё раз.');
+      }
+      return rejectWithValue('Не удалось отправить отзыв. Попробуйте ещё раз.');
+    }
   }
 );
 

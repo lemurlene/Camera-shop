@@ -37,11 +37,12 @@ export const makeFakeStore = (initialState?: Partial<State>): State => ({
     offerComments: [],
     isLoadingComments: false,
     isLoadingComment: false,
+    commentsError: null,
+    postCommentError: null,
   },
   ERROR: {
     error: null,
   },
-  ...initialState,
   COUPON: {
     coupon: null,
     discount: 0,
@@ -51,5 +52,6 @@ export const makeFakeStore = (initialState?: Partial<State>): State => ({
   ORDER: {
     status: 'idle',
     error: null,
-  }
+  },
+  ...initialState,
 });
