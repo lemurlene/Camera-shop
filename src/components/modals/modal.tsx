@@ -17,7 +17,7 @@ export const Modal: React.FC<ModalProps> = ({
 }) => {
   const modalRef = useModalFocus(isActive);
 
-  const handleEscape = useCallback((event: KeyboardEvent) => {
+  const handleButtonEscape = useCallback((event: KeyboardEvent) => {
     if (event.key === 'Escape') {
       onClose();
     }
@@ -57,16 +57,16 @@ export const Modal: React.FC<ModalProps> = ({
 
   useEffect(() => {
     if (isActive) {
-      document.addEventListener('keydown', handleEscape);
+      document.addEventListener('keydown', handleButtonEscape);
       document.addEventListener('keydown', handleTabKey);
       document.body.classList.add('scroll-lock');
       return () => {
-        document.removeEventListener('keydown', handleEscape);
+        document.removeEventListener('keydown', handleButtonEscape);
         document.removeEventListener('keydown', handleTabKey);
         document.body.classList.remove('scroll-lock');
       };
     }
-  }, [isActive, handleEscape, handleTabKey]);
+  }, [isActive, handleButtonEscape, handleTabKey]);
 
   if (!isActive) {
     return null;

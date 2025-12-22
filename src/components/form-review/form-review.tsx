@@ -118,7 +118,7 @@ function FormReview(): JSX.Element {
     [touched, liveErrors]
   );
 
-  const handleChange = useCallback((evt: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = useCallback((evt: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = evt.target;
 
     if (name === 'rate') {
@@ -133,7 +133,7 @@ function FormReview(): JSX.Element {
     }
   }, []);
 
-  const handleBlur = useCallback((evt: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputBlur = useCallback((evt: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name } = evt.target;
 
     if (name === 'rate') {
@@ -171,7 +171,7 @@ function FormReview(): JSX.Element {
     openModal('success-review');
   }, [dispatch, isFormValid, offerId, openModal, values]);
 
-  const handleSubmit = useCallback(
+  const handleFormSubmit = useCallback(
     (evt: FormEvent<HTMLFormElement>) => {
       evt.preventDefault();
       void submit();
@@ -181,7 +181,7 @@ function FormReview(): JSX.Element {
 
   return (
     <div className="form-review">
-      <form method="post" onSubmit={handleSubmit} data-testid="review-form">
+      <form method="post" onSubmit={handleFormSubmit} data-testid="review-form">
         <fieldset className={ratingClass}>
           <legend className="rate__caption">
             Рейтинг
@@ -197,7 +197,7 @@ function FormReview(): JSX.Element {
                   key={f.ratingValue}
                   ratingValue={f.ratingValue}
                   title={f.title}
-                  onChange={handleChange}
+                  onChange={handleInputChange}
                   isDisabled={isSending}
                   checked={values.rating === f.ratingValue}
                 />
@@ -240,8 +240,8 @@ function FormReview(): JSX.Element {
                     maxLength={REVIEW_RULES.text.max}
                     disabled={isSending}
                     value={values[field.name]}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
+                    onChange={handleInputChange}
+                    onBlur={handleInputBlur}
                   />
                 </label>
 
@@ -277,8 +277,8 @@ function FormReview(): JSX.Element {
                   maxLength={maxLength}
                   disabled={isSending}
                   value={values[field.name]}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
+                  onChange={handleInputChange}
+                  onBlur={handleInputBlur}
                 />
               </label>
 

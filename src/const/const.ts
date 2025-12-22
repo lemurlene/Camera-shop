@@ -7,6 +7,7 @@ export const Setting = {
   MaxShowReviews: 3,
   MaxShowPromo: 3,
   MaxProductQuantity: 9,
+  MaxPaginationLink: 3,
 } as const;
 
 export const RouteNames = {

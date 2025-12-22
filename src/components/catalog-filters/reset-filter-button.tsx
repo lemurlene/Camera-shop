@@ -17,7 +17,7 @@ const ResetFilterButton = ({ onReset }: ResetFilterButtonProps): JSX.Element => 
 
   const resetButtonRef = useRef<HTMLButtonElement>(null);
 
-  const handleReset = useCallback(() => {
+  const handleFilterReset = useCallback(() => {
     dispatch(resetFilters());
     onReset?.();
   }, [dispatch, onReset]);
@@ -25,9 +25,9 @@ const ResetFilterButton = ({ onReset }: ResetFilterButtonProps): JSX.Element => 
   const handleResetKeyDown = useCallback((e: KeyboardEvent<HTMLButtonElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      handleReset();
+      handleFilterReset();
     }
-  }, [handleReset]);
+  }, [handleFilterReset]);
 
   const hasActiveFilters = currentCategory !== null ||
     currentType.length > 0 ||
@@ -40,7 +40,7 @@ const ResetFilterButton = ({ onReset }: ResetFilterButtonProps): JSX.Element => 
       ref={resetButtonRef}
       className="btn catalog-filter__reset-btn"
       type="reset"
-      onClick={handleReset}
+      onClick={handleFilterReset}
       onKeyDown={handleResetKeyDown}
       disabled={!hasActiveFilters}
       aria-disabled={!hasActiveFilters}

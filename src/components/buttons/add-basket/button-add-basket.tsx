@@ -18,7 +18,7 @@ function ButtonAddBasket({
   const { openModal } = useModal();
   const { addToCart, isInCart, updateQuantity, getItemQuantity } = useCart();
 
-  const handleClick = () => {
+  const handleButtonClick = () => {
     if (!isInCart(productId)) {
       addToCart(productId, productData, quantity);
     } else {
@@ -31,7 +31,7 @@ function ButtonAddBasket({
     <button
       className={buttonClass}
       type="button"
-      onClick={handleClick}
+      onClick={handleButtonClick}
     >
       {buttonIcon}
       {buttonText}

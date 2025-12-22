@@ -26,7 +26,7 @@ function ButtonContinueShopping({ isHalfWidth = false, isOrder = false }: Button
 
   const { buttonText, buttonIcon, buttonClass, buttonClassHalfWidth } = buttonConfig;
 
-  const handleClick = () => {
+  const handleButtonClick = () => {
     closeModal();
     if (location.pathname !== catalogPath) {
       navigate(catalogPath);
@@ -37,7 +37,7 @@ function ButtonContinueShopping({ isHalfWidth = false, isOrder = false }: Button
     <button
       className={cn(buttonClass,
         { [buttonClassHalfWidth]: isHalfWidth })}
-      onClick={handleClick}
+      onClick={handleButtonClick}
     >
       {buttonIcon}
       {buttonText}

@@ -17,7 +17,7 @@ function SearchInput({
   onKeyDown,
   inputRef
 }: SearchInputProps) {
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     onInputChange(e.target.value);
   }, [onInputChange]);
 
@@ -33,7 +33,7 @@ function SearchInput({
         autoComplete="off"
         placeholder="Поиск по сайту"
         value={searchValue}
-        onChange={handleChange}
+        onChange={handleInputChange}
         onFocus={onInputFocus}
         onKeyDown={onKeyDown}
         aria-haspopup="listbox"

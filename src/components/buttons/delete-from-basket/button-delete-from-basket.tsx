@@ -13,7 +13,7 @@ function ButtonDeleteFromBasket({
   const { closeModal } = useModal();
   const { removeFromCart } = useCart();
 
-  const handleClick = () => {
+  const handleButtonClick = () => {
     removeFromCart(productId);
     closeModal();
   };
@@ -22,7 +22,7 @@ function ButtonDeleteFromBasket({
     <button
       className={buttonClass}
       type="button"
-      onClick={handleClick}
+      onClick={handleButtonClick}
     >
       {buttonIcon}
       {buttonText}

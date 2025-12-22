@@ -15,10 +15,18 @@ vi.mock('../../hooks', () => ({
   useAppSelector: (selector: (state: unknown) => unknown) => selector(mockState),
 }));
 
-vi.mock('../../contexts/', () => ({
-  UrlProvider: ({ children }: { children: React.ReactNode }) => children,
-  ModalProvider: ({ children }: { children: React.ReactNode }) => children,
-}));
+vi.mock('../../contexts/', async () => {
+  const actual = await vi.importActual<typeof import('../../contexts/')>('../../contexts/');
+
+  const PassThrough = ({ children }: { children: React.ReactNode }) => children;
+
+  return {
+    ...actual,
+    UrlProvider: PassThrough,
+    ModalProvider: PassThrough,
+    CartProvider: PassThrough,
+  };
+});
 
 vi.mock('../layout', () => ({
   default: () => (
@@ -51,6 +59,10 @@ vi.mock('../error-server', () => ({
 vi.mock('../../store/api-action', () => ({
   fetchOffers: vi.fn(() => ({})),
   fetchOffersPromo: vi.fn(() => ({})),
+}));
+
+vi.mock('../spinner/spinner', () => ({
+  default: () => <div data-testid="spinner" />,
 }));
 
 import * as apiActions from '../../store/api-action';

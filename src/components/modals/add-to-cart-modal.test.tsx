@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react';
+import type { ReactNode } from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { AddToCartModal } from './add-to-cart-modal';
 import type { FullOfferType } from '../../const/type';
@@ -28,21 +29,22 @@ vi.mock('../../contexts', () => ({
 
 describe('AddToCartModal', () => {
   const mockCloseModal = vi.fn();
+
   const mockProductData: FullOfferType = {
     id: 1,
     name: 'Test Camera',
     vendorCode: 'TEST123',
     type: 'Цифровая',
     category: 'Фотокамера',
-    level: 'Нулевой',
     description: 'Test description',
+    level: 'Нулевой',
     price: 1000,
+    rating: 4.5,
+    reviewCount: 10,
     previewImg: 'test.jpg',
     previewImg2x: 'test@2x.jpg',
     previewImgWebp: 'test.webp',
     previewImgWebp2x: 'test@2x.webp',
-    rating: 4.5,
-    reviewCount: 10,
   };
 
   beforeEach(() => {
@@ -54,12 +56,16 @@ describe('AddToCartModal', () => {
       closeModal: mockCloseModal,
     });
 
-    mockModal.mockImplementation(({ children, onClose }: { children: React.ReactNode; onClose: () => void }) => (
-      <div data-testid="modal">
-        <div data-testid="modal-content">{children}</div>
-        <button onClick={onClose} data-testid="close-button">Close</button>
-      </div>
-    ));
+    mockModal.mockImplementation(
+      ({ children, onClose }: { children: ReactNode; onClose: () => void }) => (
+        <div data-testid="modal">
+          <div data-testid="modal-content">{children}</div>
+          <button type="button" onClick={onClose} data-testid="close-button">
+            Close
+          </button>
+        </div>
+      )
+    );
 
     mockBasketCardMemo.mockImplementation(() => (
       <div data-testid="basket-card">Basket Card</div>
@@ -81,26 +87,29 @@ describe('AddToCartModal', () => {
   it('passes correct props to child components', () => {
     render(<AddToCartModal productData={mockProductData} />);
 
-    expect(mockModal).toHaveBeenCalledWith(
-      expect.objectContaining({
-        onClose: mockCloseModal,
-      }),
-      {}
-    );
+    expect(mockModal).toHaveBeenCalledTimes(1);
+    const [modalProps] = mockModal.mock.calls[0] as unknown as [{ onClose: () => void }];
+    expect(modalProps.onClose).toBe(mockCloseModal);
 
-    expect(mockBasketCardMemo).toHaveBeenCalledWith(
-      expect.objectContaining({
-        card: mockProductData,
-        isModal: true,
-      }),
-      {}
-    );
+    expect(mockBasketCardMemo).toHaveBeenCalledTimes(1);
+    const [basketProps] = mockBasketCardMemo.mock.calls[0] as unknown as [
+      { card: FullOfferType; isModal: boolean }
+    ];
+    expect(basketProps.card).toBe(mockProductData);
+    expect(basketProps.isModal).toBe(true);
 
-    expect(mockButtonAddBasketMemo).toHaveBeenCalledWith(
-      expect.objectContaining({
-        isModal: true,
-      }),
-      {}
-    );
+    expect(mockButtonAddBasketMemo).toHaveBeenCalledTimes(1);
+    const [buttonProps] = mockButtonAddBasketMemo.mock.calls[0] as unknown as [
+      { productId: number; productData: FullOfferType }
+    ];
+    expect(buttonProps.productId).toBe(mockProductData.id);
+    expect(buttonProps.productData).toBe(mockProductData);
+  });
+
+  it('calls closeModal when modal onClose is triggered', () => {
+    render(<AddToCartModal productData={mockProductData} />);
+
+    fireEvent.click(screen.getByTestId('close-button'));
+    expect(mockCloseModal).toHaveBeenCalledTimes(1);
   });
 });

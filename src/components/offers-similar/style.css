@@ -5,3 +5,7 @@
 .slider-controls {
   pointer-events: auto !important;
 }
+
+.slider-controls:disabled {
+  pointer-events: none !important;
+}

@@ -34,7 +34,7 @@ function ButtonBuy({ isOffer = false, product }: ButtonBuyProps): JSX.Element {
 
   const { openModal } = useModal();
 
-  const handleClick = () => {
+  const handleButtonClick = () => {
     openModal('add-to-cart', product);
   };
 
@@ -42,7 +42,7 @@ function ButtonBuy({ isOffer = false, product }: ButtonBuyProps): JSX.Element {
     <button
       className={buttonClasses}
       type="button"
-      onClick={handleClick}
+      onClick={handleButtonClick}
     >
       {buttonIcon}
       {buttonText}

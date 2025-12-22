@@ -5,7 +5,7 @@ function ButtonAddComment(): JSX.Element {
 
   const { openModal } = useModal();
 
-  const handleClick = () => {
+  const handleButtonClick = () => {
     openModal('add-review');
   };
 
@@ -13,7 +13,7 @@ function ButtonAddComment(): JSX.Element {
     <button
       className='btn'
       type="button"
-      onClick={handleClick}
+      onClick={handleButtonClick}
     >
       Оставить свой отзыв
     </button>

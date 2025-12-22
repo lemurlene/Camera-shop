@@ -27,16 +27,18 @@ describe('NavList Component', () => {
     expect(screen.getByText('Каталог')).toBeInTheDocument();
     expect(screen.getByText('Гарантии')).toBeInTheDocument();
     expect(screen.getByText('Доставка')).toBeInTheDocument();
+    expect(screen.getByText('О компании')).toBeInTheDocument();
 
     const list = screen.getByRole('list');
     expect(list).toHaveClass('nav-list');
 
     const items = screen.getAllByRole('listitem');
-    expect(items).toHaveLength(3);
+    expect(items).toHaveLength(4);
     items.forEach((item) => {
       expect(item).toHaveClass('nav-item');
     });
   });
+
 
   it('should highlight the active link', () => {
     render(

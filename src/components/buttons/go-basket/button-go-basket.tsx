@@ -10,7 +10,7 @@ function ButtonGoBasket(): JSX.Element {
 
   const { buttonText, buttonIcon, buttonClass } = ButtonGoBasketConfig.GoToCart;
 
-  const handleClick = () => {
+  const handleButtonClick = () => {
     closeModal();
     navigate(AppRoute.Basket);
   };
@@ -19,7 +19,7 @@ function ButtonGoBasket(): JSX.Element {
     <button
       className={buttonClass}
       type="button"
-      onClick={handleClick}
+      onClick={handleButtonClick}
     >
       {buttonIcon}
       {buttonText}

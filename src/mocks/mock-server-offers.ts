@@ -51,7 +51,7 @@ export const mockServerOffers: ServerOffer[] = [
   },
   {
     'id': 4,
-    'name': 'Орлёнок',
+    'name': 'Look',
     'vendorCode': 'O78DFGSD83',
     'type': 'Плёночная',
     'category': 'Фотоаппарат',
@@ -67,7 +67,7 @@ export const mockServerOffers: ServerOffer[] = [
   },
   {
     'id': 5,
-    'name': 'Van Shot',
+    'name': 'Look 2',
     'vendorCode': 'YU7RT5GH76',
     'type': 'Коллекционная',
     'category': 'Видеокамера',
@@ -83,7 +83,7 @@ export const mockServerOffers: ServerOffer[] = [
   },
   {
     'id': 6,
-    'name': 'Click Sap',
+    'name': 'Look 7',
     'vendorCode': 'KLN54H76F5',
     'type': 'Плёночная',
     'category': 'Фотоаппарат',
@@ -96,4 +96,5 @@ export const mockServerOffers: ServerOffer[] = [
     'previewImgWebp2x': 'img/content/click-sap@2x.webp',
     'rating': 2,
     'reviewCount': 2
-  }];
+  }
+];

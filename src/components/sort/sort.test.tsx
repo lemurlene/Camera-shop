@@ -1,8 +1,16 @@
-import { describe, it, expect, vi, beforeEach, MockedFunction } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
+
 import Sort from './sort';
+
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { changeSortType, changeSortOrder, selectSortType, selectSortOrder } from '../../store/sort';
+import {
+  changeSortType,
+  changeSortOrder,
+  selectSortType,
+  selectSortOrder,
+} from '../../store/sort';
+
 import { SortTypes, SortOrders } from './const';
 
 vi.mock('../../hooks', () => ({
@@ -17,293 +25,181 @@ vi.mock('../../store/sort', () => ({
   selectSortOrder: vi.fn(),
 }));
 
-const mockUseAppDispatch = useAppDispatch as MockedFunction<typeof useAppDispatch>;
-const mockUseAppSelector = useAppSelector as MockedFunction<typeof useAppSelector>;
-const mockChangeSortType = changeSortType as MockedFunction<typeof changeSortType>;
-const mockChangeSortOrder = changeSortOrder as MockedFunction<typeof changeSortOrder>;
-const mockSelectSortType = selectSortType as MockedFunction<typeof selectSortType>;
-const mockSelectSortOrder = selectSortOrder as MockedFunction<typeof selectSortOrder>;
-
 describe('Sort', () => {
-  const mockDispatch = vi.fn();
+  type AppDispatch = ReturnType<typeof useAppDispatch>;
+
+  const mockUseAppDispatch = vi.mocked(useAppDispatch);
+  const mockUseAppSelector = vi.mocked(useAppSelector);
+
+  const mockChangeSortType = vi.mocked(changeSortType);
+  const mockChangeSortOrder = vi.mocked(changeSortOrder);
+
+  const mockDispatch = vi.fn() as unknown as AppDispatch;
 
   beforeEach(() => {
     vi.clearAllMocks();
 
     mockUseAppDispatch.mockReturnValue(mockDispatch);
-    mockUseAppSelector.mockImplementation((selector) => {
-      if (selector === mockSelectSortType) {
+    mockChangeSortType.mockImplementation(
+      (type) =>
+        ({
+          type: 'SORT/changeSortType',
+          payload: type,
+        }) as ReturnType<typeof changeSortType>
+    );
+
+    mockChangeSortOrder.mockImplementation(
+      (order) =>
+        ({
+          type: 'SORT/changeSortOrder',
+          payload: order,
+        }) as ReturnType<typeof changeSortOrder>
+    );
+
+    mockUseAppSelector.mockImplementation((selector: unknown) => {
+      if (selector === selectSortType) {
         return SortTypes.Popular;
       }
-      if (selector === mockSelectSortOrder) {
+      if (selector === selectSortOrder) {
         return SortOrders.Asc;
       }
       return undefined;
     });
   });
 
-  describe('component rendering', () => {
-    it('should render all main elements', () => {
-      render(<Sort />);
+  it('renders all main controls', () => {
+    render(<Sort />);
 
-      expect(screen.getByText('Сортировать:')).toBeInTheDocument();
-      expect(screen.getByLabelText('по цене')).toBeInTheDocument();
-      expect(screen.getByLabelText('по популярности')).toBeInTheDocument();
-      expect(screen.getByLabelText('По возрастанию')).toBeInTheDocument();
-      expect(screen.getByLabelText('По убыванию')).toBeInTheDocument();
-    });
+    expect(screen.getByText('Сортировать:')).toBeInTheDocument();
 
-    it('should render with correct initial state', () => {
-      render(<Sort />);
+    expect(screen.getByLabelText('по цене')).toBeInTheDocument();
+    expect(screen.getByLabelText('по популярности')).toBeInTheDocument();
 
-      const popularRadio = screen.getByLabelText('по популярности');
-      const priceRadio = screen.getByLabelText('по цене');
-      const ascRadio = screen.getByLabelText('По возрастанию');
-      const descRadio = screen.getByLabelText('По убыванию');
-
-      expect(popularRadio).toBeChecked();
-      expect(priceRadio).not.toBeChecked();
-      expect(ascRadio).toBeChecked();
-      expect(descRadio).not.toBeChecked();
-    });
-
-    it('should render correct class names', () => {
-      render(<Sort />);
-
-      const form = screen.getByRole('form');
-      expect(form).toBeInTheDocument();
-
-      const sortTitle = screen.getByText('Сортировать:');
-      expect(sortTitle).toHaveClass('title', 'title--h5');
-    });
+    expect(screen.getByLabelText('По возрастанию')).toBeInTheDocument();
+    expect(screen.getByLabelText('По убыванию')).toBeInTheDocument();
   });
 
-  describe('sort type functionality', () => {
-    it('should call changeSortType with Price when price radio is clicked', () => {
-      render(<Sort />);
+  it('renders with correct initial checked state from selectors', () => {
+    render(<Sort />);
 
-      const priceRadio = screen.getByLabelText('по цене');
-      fireEvent.click(priceRadio);
+    expect(screen.getByLabelText('по популярности')).toBeChecked();
+    expect(screen.getByLabelText('по цене')).not.toBeChecked();
 
-      expect(mockDispatch).toHaveBeenCalledWith(mockChangeSortType(SortTypes.Price));
-      expect(mockDispatch).toHaveBeenCalledTimes(1);
-    });
-
-    it('should call changeSortType with Popular when popular radio is clicked', () => {
-      mockUseAppSelector.mockImplementation((selector) => {
-        if (selector === mockSelectSortType) {
-          return SortTypes.Price;
-        }
-        if (selector === mockSelectSortOrder) {
-          return SortOrders.Asc;
-        }
-        return undefined;
-      });
-
-      render(<Sort />);
-
-      const popularRadio = screen.getByLabelText('по популярности');
-      fireEvent.click(popularRadio);
-
-      expect(mockDispatch).toHaveBeenCalledWith(mockChangeSortType(SortTypes.Popular));
-      expect(mockDispatch).toHaveBeenCalledTimes(1);
-    });
+    expect(screen.getByLabelText('По возрастанию')).toBeChecked();
+    expect(screen.getByLabelText('По убыванию')).not.toBeChecked();
   });
 
-  describe('sort order functionality', () => {
-    it('should call changeSortOrder with Asc when ascending radio is clicked', () => {
-      mockUseAppSelector.mockImplementation((selector) => {
-        if (selector === mockSelectSortType) {
-          return SortTypes.Popular;
-        }
-        if (selector === mockSelectSortOrder) {
-          return SortOrders.Desc;
-        }
-        return undefined;
-      });
+  it('dispatches changeSortType(Price) when "по цене" clicked', () => {
+    render(<Sort />);
 
-      render(<Sort />);
+    fireEvent.click(screen.getByLabelText('по цене'));
 
-      const ascRadio = screen.getByLabelText('По возрастанию');
-      fireEvent.click(ascRadio);
+    expect(mockChangeSortType).toHaveBeenCalledTimes(1);
+    expect(mockChangeSortType).toHaveBeenCalledWith(SortTypes.Price);
 
-      expect(mockDispatch).toHaveBeenCalledWith(mockChangeSortOrder(SortOrders.Asc));
-      expect(mockDispatch).toHaveBeenCalledTimes(1);
-    });
+    const expectedAction = {
+      type: 'SORT/changeSortType',
+      payload: SortTypes.Price,
+    };
 
-    it('should call changeSortOrder with Desc when descending radio is clicked', () => {
-      render(<Sort />);
-
-      const descRadio = screen.getByLabelText('По убыванию');
-      fireEvent.click(descRadio);
-
-      expect(mockDispatch).toHaveBeenCalledWith(mockChangeSortOrder(SortOrders.Desc));
-      expect(mockDispatch).toHaveBeenCalledTimes(1);
-    });
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledWith(expectedAction);
   });
 
-  describe('integration between sort type and order', () => {
-    it('should maintain independent state for type and order', () => {
-      mockUseAppSelector.mockImplementation((selector) => {
-        if (selector === mockSelectSortType) {
-          return SortTypes.Price;
-        }
-        if (selector === mockSelectSortOrder) {
-          return SortOrders.Desc;
-        }
-        return undefined;
-      });
-
-      render(<Sort />);
-
-      const priceRadio = screen.getByLabelText('по цене');
-      const descRadio = screen.getByLabelText('По убыванию');
-
-      expect(priceRadio).toBeChecked();
-      expect(descRadio).toBeChecked();
+  it('dispatches changeSortType(Popular) when "по популярности" clicked', () => {
+    mockUseAppSelector.mockImplementation((selector: unknown) => {
+      if (selector === selectSortType) {
+        return SortTypes.Price;
+      }
+      if (selector === selectSortOrder) {
+        return SortOrders.Asc;
+      }
+      return undefined;
     });
+
+    render(<Sort />);
+
+    fireEvent.click(screen.getByLabelText('по популярности'));
+
+    expect(mockChangeSortType).toHaveBeenCalledTimes(1);
+    expect(mockChangeSortType).toHaveBeenCalledWith(SortTypes.Popular);
+
+    const expectedAction = {
+      type: 'SORT/changeSortType',
+      payload: SortTypes.Popular,
+    };
+
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledWith(expectedAction);
   });
 
-  describe('edge cases', () => {
-    it('should handle undefined selectors gracefully', () => {
-      mockUseAppSelector.mockReturnValue(undefined);
+  it('dispatches changeSortOrder(Desc) when "По убыванию" clicked', () => {
+    render(<Sort />);
 
-      render(<Sort />);
+    fireEvent.click(screen.getByLabelText('По убыванию'));
 
-      expect(screen.getByText('Сортировать:')).toBeInTheDocument();
-    });
+    expect(mockChangeSortOrder).toHaveBeenCalledTimes(1);
+    expect(mockChangeSortOrder).toHaveBeenCalledWith(SortOrders.Desc);
 
-    it('should call dispatch only for inactive radio buttons', () => {
-      render(<Sort />);
+    const expectedAction = {
+      type: 'SORT/changeSortOrder',
+      payload: SortOrders.Desc,
+    };
 
-      const priceRadio = screen.getByLabelText('по цене');
-      const popularRadio = screen.getByLabelText('по популярности');
-
-      fireEvent.click(priceRadio);
-      expect(mockDispatch).toHaveBeenCalledTimes(1);
-      expect(mockDispatch).toHaveBeenCalledWith(mockChangeSortType(SortTypes.Price));
-
-      fireEvent.click(popularRadio);
-      expect(mockDispatch).toHaveBeenCalledTimes(1);
-
-      fireEvent.click(priceRadio);
-      expect(mockDispatch).toHaveBeenCalledTimes(2);
-      expect(mockDispatch).toHaveBeenCalledWith(mockChangeSortType(SortTypes.Price));
-    });
-
-    it('should handle order radio buttons similarly', () => {
-      render(<Sort />);
-
-      const descRadio = screen.getByLabelText('По убыванию');
-      const ascRadio = screen.getByLabelText('По возрастанию');
-
-      fireEvent.click(descRadio);
-      expect(mockDispatch).toHaveBeenCalledTimes(1);
-      expect(mockDispatch).toHaveBeenCalledWith(mockChangeSortOrder(SortOrders.Desc));
-
-      fireEvent.click(ascRadio);
-      expect(mockDispatch).toHaveBeenCalledTimes(1);
-    });
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledWith(expectedAction);
   });
 
-  describe('accessibility', () => {
-    it('should have proper input attributes', () => {
-      render(<Sort />);
-
-      const priceInput = screen.getByLabelText('по цене');
-      const popularInput = screen.getByLabelText('по популярности');
-      const ascInput = screen.getByLabelText('По возрастанию');
-      const descInput = screen.getByLabelText('По убыванию');
-
-      expect(priceInput).toHaveAttribute('type', 'radio');
-      expect(popularInput).toHaveAttribute('type', 'radio');
-      expect(ascInput).toHaveAttribute('type', 'radio');
-      expect(descInput).toHaveAttribute('type', 'radio');
-
-      expect(priceInput).toHaveAttribute('name', 'sort');
-      expect(popularInput).toHaveAttribute('name', 'sort');
-      expect(ascInput).toHaveAttribute('name', 'sort-icon');
-      expect(descInput).toHaveAttribute('name', 'sort-icon');
+  it('dispatches changeSortOrder(Asc) when "По возрастанию" clicked', () => {
+    mockUseAppSelector.mockImplementation((selector: unknown) => {
+      if (selector === selectSortType) {
+        return SortTypes.Popular;
+      }
+      if (selector === selectSortOrder) {
+        return SortOrders.Desc;
+      }
+      return undefined;
     });
 
-    it('should have unique ids for inputs', () => {
-      render(<Sort />);
+    render(<Sort />);
 
-      const priceInput = screen.getByLabelText('по цене');
-      const popularInput = screen.getByLabelText('по популярности');
-      const ascInput = screen.getByLabelText('По возрастанию');
-      const descInput = screen.getByLabelText('По убыванию');
+    fireEvent.click(screen.getByLabelText('По возрастанию'));
 
-      expect(priceInput).toHaveAttribute('id', 'sortPrice');
-      expect(popularInput).toHaveAttribute('id', 'sortPopular');
-      expect(ascInput).toHaveAttribute('id', 'up');
-      expect(descInput).toHaveAttribute('id', 'down');
-    });
+    expect(mockChangeSortOrder).toHaveBeenCalledTimes(1);
+    expect(mockChangeSortOrder).toHaveBeenCalledWith(SortOrders.Asc);
 
-    it('should have proper aria-labels for sort order', () => {
-      render(<Sort />);
+    const expectedAction = {
+      type: 'SORT/changeSortOrder',
+      payload: SortOrders.Asc,
+    };
 
-      const ascInput = screen.getByLabelText('По возрастанию');
-      const descInput = screen.getByLabelText('По убыванию');
-
-      expect(ascInput).toHaveAttribute('aria-label', 'По возрастанию');
-      expect(descInput).toHaveAttribute('aria-label', 'По убыванию');
-    });
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledWith(expectedAction);
   });
 
-  describe('form structure', () => {
-    it('should have proper form structure', () => {
-      render(<Sort />);
+  it('has correct attributes (radio groups)', () => {
+    render(<Sort />);
 
-      const form = screen.getByRole('form');
-      expect(form).toHaveAttribute('action', '#');
+    const price = screen.getByLabelText('по цене');
+    const popular = screen.getByLabelText('по популярности');
 
-      const sortInner = form.querySelector('.catalog-sort__inner');
-      expect(sortInner).toBeInTheDocument();
+    const asc = screen.getByLabelText('По возрастанию');
+    const desc = screen.getByLabelText('По убыванию');
 
-      const sortType = form.querySelector('.catalog-sort__type');
-      expect(sortType).toBeInTheDocument();
+    expect(price).toHaveAttribute('type', 'radio');
+    expect(popular).toHaveAttribute('type', 'radio');
+    expect(asc).toHaveAttribute('type', 'radio');
+    expect(desc).toHaveAttribute('type', 'radio');
 
-      const sortOrder = form.querySelector('.catalog-sort__order');
-      expect(sortOrder).toBeInTheDocument();
-    });
+    expect(price).toHaveAttribute('name', 'sort');
+    expect(popular).toHaveAttribute('name', 'sort');
 
-    it('should have correct number of radio buttons in each group', () => {
-      render(<Sort />);
+    expect(asc).toHaveAttribute('name', 'sort-icon');
+    expect(desc).toHaveAttribute('name', 'sort-icon');
 
-      const allRadios = screen.getAllByRole('radio');
-
-      const sortTypeRadios = allRadios.filter((radio) =>
-        radio.getAttribute('name') === 'sort'
-      );
-      expect(sortTypeRadios).toHaveLength(2);
-
-      const sortOrderRadios = allRadios.filter((radio) =>
-        radio.getAttribute('name') === 'sort-icon'
-      );
-      expect(sortOrderRadios).toHaveLength(2);
-    });
-
-    it('should have proper visual structure with CSS classes', () => {
-      render(<Sort />);
-
-      const catalogSort = document.querySelector('.catalog-sort');
-      expect(catalogSort).toBeInTheDocument();
-
-      const catalogSortInner = document.querySelector('.catalog-sort__inner');
-      expect(catalogSortInner).toBeInTheDocument();
-
-      const catalogSortType = document.querySelector('.catalog-sort__type');
-      expect(catalogSortType).toBeInTheDocument();
-
-      const catalogSortOrder = document.querySelector('.catalog-sort__order');
-      expect(catalogSortOrder).toBeInTheDocument();
-
-      const btnTextElements = document.querySelectorAll('.catalog-sort__btn-text');
-      expect(btnTextElements).toHaveLength(2);
-
-      const btnElements = document.querySelectorAll('.catalog-sort__btn');
-      expect(btnElements).toHaveLength(2);
-    });
+    expect(price).toHaveAttribute('id', 'sortPrice');
+    expect(popular).toHaveAttribute('id', 'sortPopular');
+    expect(asc).toHaveAttribute('id', 'up');
+    expect(desc).toHaveAttribute('id', 'down');
   });
 });

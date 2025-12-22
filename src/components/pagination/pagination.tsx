@@ -1,19 +1,26 @@
 import { usePagination } from '../../hooks';
 import { useUrl } from '../../contexts';
 import PaginationList from './pagination-list';
+import { Setting } from '../../const/const';
 
 interface PaginationProps {
   totalItems: number;
   itemsPerPage?: number;
 }
 
-function Pagination({ totalItems, itemsPerPage = 9 }: PaginationProps): JSX.Element | null {
+function Pagination({ totalItems, itemsPerPage = Setting.MaxProductQuantity }: PaginationProps): JSX.Element | null {
   const {
     currentPage,
     totalPages,
-    paginationRange
+    pages,
+    showPrev,
+    showNext,
+    prevTargetPage,
+    nextTargetPage,
   } = usePagination({ totalItems, itemsPerPage });
+
   const { getAllParams, setParams } = useUrl();
+
   if (totalPages <= 1) {
     return null;
   }
@@ -21,42 +28,42 @@ function Pagination({ totalItems, itemsPerPage = 9 }: PaginationProps): JSX.Elem
   const createPageUrl = (page: number): string => {
     const currentParams = getAllParams();
     const newParams: Record<string, string | string[] | null> = { ...currentParams };
+
     if (page === 1) {
       delete newParams.page;
     } else {
       newParams.page = page.toString();
     }
 
-    const searchParams = new URLSearchParams();
+    const sp = new URLSearchParams();
     Object.entries(newParams).forEach(([key, value]) => {
       if (value === null) {
         return;
       }
       if (Array.isArray(value)) {
-        value.forEach((v) => searchParams.append(key, v));
+        value.forEach((v) => sp.append(key, v));
       } else {
-        searchParams.set(key, value);
+        sp.set(key, value);
       }
     });
 
-    const queryString = searchParams.toString();
-    return queryString ? `?${queryString}` : '?';
+    const qs = sp.toString();
+    return qs ? `?${qs}` : '?';
   };
 
   const handlePageClick = (page: number) => {
-    if (page === 1) {
-      setParams({ page: null });
-    } else {
-      setParams({ page: page.toString() });
-    }
+    setParams({ page: page === 1 ? null : page.toString() });
   };
 
   return (
     <div className="pagination" data-testid="pagination">
       <PaginationList
         currentPage={currentPage}
-        totalPages={totalPages}
-        paginationRange={paginationRange}
+        pages={pages}
+        showPrev={showPrev}
+        showNext={showNext}
+        prevTargetPage={prevTargetPage}
+        nextTargetPage={nextTargetPage}
         createPageUrl={createPageUrl}
         onPageClick={handlePageClick}
       />

@@ -1,353 +1,150 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { act, renderHook, waitFor } from '@testing-library/react';
+
 import { usePagination } from './use-pagination';
 import { useUrl } from '../contexts';
-
-vi.mock('../store/api-action', () => ({}));
-vi.mock('../store/offers', () => ({}));
-vi.mock('../hooks', () => ({
-  createAppAsyncThunk: vi.fn(),
-}));
+import { Setting } from '../const/const';
 
 vi.mock('../contexts', () => ({
   useUrl: vi.fn(),
 }));
 
-
 const mockedUseUrl = vi.mocked(useUrl);
 
-const TestWrapper = ({ children }: { children: React.ReactNode }) => (
-  <div>{children}</div>
-);
+type UrlAllParams = Record<string, string | string[]>;
+type UrlSetParams = Record<string, string | string[] | null>;
 
 describe('usePagination', () => {
+  const getParam = vi.fn<[string], string | null>();
+  const getParamAll = vi.fn<[string], string[]>();
+  const setParam = vi.fn<[string, string | string[] | null], void>();
+  const setParams = vi.fn<[UrlSetParams], void>();
+  const getAllParams = vi.fn<[], UrlAllParams>(() => ({}));
+
+  const itemsPerPage = Setting.MaxProductQuantity;
+  const maxLinks = Setting.MaxPaginationLink;
+
   beforeEach(() => {
     vi.clearAllMocks();
-  });
 
-  describe('basic functionality', () => {
-    it('should return correct pagination data for first page', () => {
-      mockedUseUrl.mockReturnValue({
-        getParam: () => null,
-        setParam: () => undefined,
-        getParamAll: () => [],
-        setParams: () => undefined,
-        getAllParams: () => ({}),
-      });
+    getParam.mockReturnValue(null);
+    getParamAll.mockReturnValue([]);
 
-      const { result } = renderHook(
-        () => usePagination({ totalItems: 100, itemsPerPage: 9 }),
-        { wrapper: TestWrapper }
-      );
-
-      expect(result.current.currentPage).toBe(1);
-      expect(result.current.totalPages).toBe(12);
-      expect(result.current.startIndex).toBe(0);
-      expect(result.current.endIndex).toBe(9);
-      expect(result.current.itemsPerPage).toBe(9);
-    });
-
-    it('should return correct pagination data for specific page', () => {
-      mockedUseUrl.mockReturnValue({
-        getParam: () => '3',
-        setParam: () => undefined,
-        getParamAll: () => [],
-        setParams: () => undefined,
-        getAllParams: () => ({}),
-      });
-
-      const { result } = renderHook(
-        () => usePagination({ totalItems: 100, itemsPerPage: 10 }),
-        { wrapper: TestWrapper }
-      );
-
-      expect(result.current.currentPage).toBe(3);
-      expect(result.current.totalPages).toBe(10);
-      expect(result.current.startIndex).toBe(20);
-      expect(result.current.endIndex).toBe(30);
-    });
-
-    it('should handle zero total items', () => {
-      mockedUseUrl.mockReturnValue({
-        getParam: () => null,
-        setParam: () => undefined,
-        getParamAll: () => [],
-        setParams: () => undefined,
-        getAllParams: () => ({}),
-      });
-
-      const { result } = renderHook(
-        () => usePagination({ totalItems: 0 }),
-        { wrapper: TestWrapper }
-      );
-
-      expect(result.current.currentPage).toBe(1);
-      expect(result.current.totalPages).toBe(0);
-      expect(result.current.startIndex).toBe(0);
-      expect(result.current.endIndex).toBe(9);
+    mockedUseUrl.mockReturnValue({
+      getParam,
+      getParamAll,
+      setParam,
+      setParams,
+      getAllParams,
     });
   });
 
-  describe('page navigation', () => {
-    it('should set page correctly', () => {
-      let setParamCalled = false;
-      let setParamArgs: unknown[] = [];
+  it('returns currentPage=1 and empty pages when totalItems=0', () => {
+    const { result } = renderHook(() => usePagination({ totalItems: 0, itemsPerPage }));
 
-      const mockSetParamSpy = (...args: unknown[]) => {
-        setParamCalled = true;
-        setParamArgs = args;
-      };
+    expect(result.current.totalPages).toBe(0);
+    expect(result.current.currentPage).toBe(1);
+    expect(result.current.pages).toEqual([]);
+    expect(result.current.showPrev).toBe(false);
+    expect(result.current.showNext).toBe(false);
+    expect(result.current.startIndex).toBe(0);
+    expect(result.current.endIndex).toBe(itemsPerPage);
+  });
 
-      mockedUseUrl.mockReturnValue({
-        getParam: () => '1',
-        setParam: mockSetParamSpy,
-        getParamAll: () => [],
-        setParams: () => undefined,
-        getAllParams: () => ({}),
-      });
+  it('when totalPages <= maxLinks: shows all pages (example 3 pages)', () => {
+    const totalItems = itemsPerPage * 3;
 
-      const { result } = renderHook(
-        () => usePagination({ totalItems: 100 }),
-        { wrapper: TestWrapper }
-      );
+    const { result } = renderHook(() => usePagination({ totalItems, itemsPerPage }));
 
-      act(() => {
-        result.current.setPage(5);
-      });
+    expect(result.current.totalPages).toBe(3);
+    expect(result.current.pages).toEqual([1, 2, 3]);
+    expect(result.current.showPrev).toBe(false);
+    expect(result.current.showNext).toBe(false);
+  });
 
-      expect(setParamCalled).toBe(true);
-      expect(setParamArgs).toEqual(['page', '5']);
-    });
+  it('when totalPages > maxLinks and currentPage=1: pages [1,2,3], showNext=true', () => {
+    const totalPages = maxLinks + 1;
+    const totalItems = totalPages * itemsPerPage;
 
-    it('should set page to null for first page', () => {
-      let setParamArgs: unknown[] = [];
+    getParam.mockImplementation((key) => (key === 'page' ? '1' : null));
 
-      const mockSetParamSpy = (...args: unknown[]) => {
-        setParamArgs = args;
-      };
+    const { result } = renderHook(() => usePagination({ totalItems, itemsPerPage }));
 
-      mockedUseUrl.mockReturnValue({
-        getParam: () => '2',
-        setParam: mockSetParamSpy,
-        getParamAll: () => [],
-        setParams: () => undefined,
-        getAllParams: () => ({}),
-      });
+    expect(result.current.totalPages).toBe(totalPages);
+    expect(result.current.currentPage).toBe(1);
+    expect(result.current.pages).toEqual([1, 2, 3]);
+    expect(result.current.showPrev).toBe(false);
+    expect(result.current.showNext).toBe(true);
+    expect(result.current.nextTargetPage).toBe(1 + maxLinks);
+  });
 
-      const { result } = renderHook(
-        () => usePagination({ totalItems: 100 }),
-        { wrapper: TestWrapper }
-      );
+  it('middle window: currentPage=4 => pages [3,4,5], showPrev=true, showNext=true', () => {
+    const totalPages = 10;
+    const totalItems = totalPages * itemsPerPage;
 
-      act(() => {
-        result.current.setPage(1);
-      });
+    getParam.mockImplementation((key) => (key === 'page' ? '4' : null));
 
-      expect(setParamArgs).toEqual(['page', null]);
-    });
+    const { result } = renderHook(() => usePagination({ totalItems, itemsPerPage }));
 
-    it('should not set page outside valid range', () => {
-      let setParamCalled = false;
+    expect(result.current.totalPages).toBe(10);
+    expect(result.current.currentPage).toBe(4);
+    expect(result.current.pages).toEqual([3, 4, 5]);
+    expect(result.current.showPrev).toBe(true);
+    expect(result.current.showNext).toBe(true);
 
-      const mockSetParamSpy = () => {
-        setParamCalled = true;
-      };
+    expect(result.current.prevTargetPage).toBe(2);
+    expect(result.current.nextTargetPage).toBe(6);
 
-      mockedUseUrl.mockReturnValue({
-        getParam: () => '1',
-        setParam: mockSetParamSpy,
-        getParamAll: () => [],
-        setParams: () => undefined,
-        getAllParams: () => ({}),
-      });
+    expect(result.current.startIndex).toBe((4 - 1) * itemsPerPage);
+    expect(result.current.endIndex).toBe((4 - 1) * itemsPerPage + itemsPerPage);
+  });
 
-      const { result } = renderHook(
-        () => usePagination({ totalItems: 100 }),
-        { wrapper: TestWrapper }
-      );
+  it('last window: currentPage=totalPages => pages [totalPages-2,totalPages-1,totalPages], showNext=false', () => {
+    const totalPages = 10;
+    const totalItems = totalPages * itemsPerPage;
 
-      act(() => {
-        result.current.setPage(0);
-      });
+    getParam.mockImplementation((key) => (key === 'page' ? String(totalPages) : null));
 
-      act(() => {
-        result.current.setPage(20);
-      });
+    const { result } = renderHook(() => usePagination({ totalItems, itemsPerPage }));
 
-      expect(setParamCalled).toBe(false);
+    expect(result.current.currentPage).toBe(10);
+    expect(result.current.pages).toEqual([8, 9, 10]);
+    expect(result.current.showPrev).toBe(true);
+    expect(result.current.showNext).toBe(false);
+  });
+
+  it('clamps raw page if too large and calls setParam in effect', async () => {
+    const totalPages = 5;
+    const totalItems = totalPages * itemsPerPage;
+
+    getParam.mockImplementation((key) => (key === 'page' ? '999' : null));
+
+    renderHook(() => usePagination({ totalItems, itemsPerPage }));
+
+    await waitFor(() => {
+      expect(setParam).toHaveBeenCalledWith('page', String(totalPages));
     });
   });
 
-  describe('page correction', () => {
-    it('should correct page when current page exceeds total pages', () => {
-      let setParamArgs: unknown[] = [];
+  it('setPage: page=1 => null; page=2 => "2"; invalid pages do nothing', () => {
+    const totalPages = 5;
+    const totalItems = totalPages * itemsPerPage;
 
-      const mockSetParamSpy = (...args: unknown[]) => {
-        setParamArgs = args;
-      };
+    const { result } = renderHook(() => usePagination({ totalItems, itemsPerPage }));
 
-      mockedUseUrl.mockReturnValue({
-        getParam: () => '15',
-        setParam: mockSetParamSpy,
-        getParamAll: () => [],
-        setParams: () => undefined,
-        getAllParams: () => ({}),
-      });
+    act(() => result.current.setPage(1));
+    expect(setParam).toHaveBeenCalledWith('page', null);
 
-      const { result } = renderHook(
-        () => usePagination({ totalItems: 100, itemsPerPage: 10 }),
-        { wrapper: TestWrapper }
-      );
+    act(() => result.current.setPage(2));
+    expect(setParam).toHaveBeenCalledWith('page', '2');
 
-      expect(result.current.currentPage).toBe(10);
-      expect(setParamArgs).toEqual(['page', '10']);
-    });
-  });
+    const callsBefore = setParam.mock.calls.length;
 
-  describe('pagination range', () => {
-    it('should return empty array for single page', () => {
-      mockedUseUrl.mockReturnValue({
-        getParam: () => '1',
-        setParam: () => undefined,
-        getParamAll: () => [],
-        setParams: () => undefined,
-        getAllParams: () => ({}),
-      });
-
-      const { result } = renderHook(
-        () => usePagination({ totalItems: 5, itemsPerPage: 10 }),
-        { wrapper: TestWrapper }
-      );
-
-      expect(result.current.paginationRange).toEqual([]);
+    act(() => {
+      result.current.setPage(0);
+      result.current.setPage(999);
     });
 
-    it('should test pagination range behavior', () => {
-      mockedUseUrl.mockReturnValue({
-        getParam: () => '1',
-        setParam: () => undefined,
-        getParamAll: () => [],
-        setParams: () => undefined,
-        getAllParams: () => ({}),
-      });
-
-      const { result } = renderHook(
-        () => usePagination({ totalItems: 30, itemsPerPage: 5 }),
-        { wrapper: TestWrapper }
-      );
-
-      const range = result.current.paginationRange;
-
-      expect(Array.isArray(range)).toBe(true);
-      expect(range.length).toBeGreaterThan(0);
-      expect(range).toContain(1);
-      expect(range).toContain(6);
-    });
-
-    it('should show dots for large number of pages', () => {
-      mockedUseUrl.mockReturnValue({
-        getParam: () => '1',
-        setParam: () => undefined,
-        getParamAll: () => [],
-        setParams: () => undefined,
-        getAllParams: () => ({}),
-      });
-
-      const { result } = renderHook(
-        () => usePagination({ totalItems: 100, itemsPerPage: 5 }),
-        { wrapper: TestWrapper }
-      );
-
-      const range = result.current.paginationRange;
-
-      expect(range).toContain('...');
-      expect(range[0]).toBe(1);
-      expect(range[range.length - 1]).toBe(20);
-    });
-
-    it('should handle middle pages correctly', () => {
-      mockedUseUrl.mockReturnValue({
-        getParam: () => '10',
-        setParam: () => undefined,
-        getParamAll: () => [],
-        setParams: () => undefined,
-        getAllParams: () => ({}),
-      });
-
-      const { result } = renderHook(
-        () => usePagination({ totalItems: 100, itemsPerPage: 5 }),
-        { wrapper: TestWrapper }
-      );
-
-      const range = result.current.paginationRange;
-
-      expect(range[0]).toBe(1);
-      expect(range).toContain('...');
-      expect(range[range.length - 1]).toBe(20);
-    });
-
-    it('should handle last pages correctly', () => {
-      mockedUseUrl.mockReturnValue({
-        getParam: () => '18',
-        setParam: () => undefined,
-        getParamAll: () => [],
-        setParams: () => undefined,
-        getAllParams: () => ({}),
-      });
-
-      const { result } = renderHook(
-        () => usePagination({ totalItems: 100, itemsPerPage: 5 }),
-        { wrapper: TestWrapper }
-      );
-
-      const range = result.current.paginationRange;
-
-      expect(range[0]).toBe(1);
-      expect(range).toContain('...');
-      expect(range[range.length - 1]).toBe(20);
-    });
-  });
-
-  describe('edge cases', () => {
-    it('should handle invalid page parameter', () => {
-      mockedUseUrl.mockReturnValue({
-        getParam: () => 'invalid',
-        setParam: () => undefined,
-        getParamAll: () => [],
-        setParams: () => undefined,
-        getAllParams: () => ({}),
-      });
-
-      const { result } = renderHook(
-        () => usePagination({ totalItems: 100 }),
-        { wrapper: TestWrapper }
-      );
-
-      expect(result.current.currentPage).toBe(1);
-    });
-
-    it('should recalculate when dependencies change', () => {
-      mockedUseUrl.mockReturnValue({
-        getParam: () => '1',
-        setParam: () => undefined,
-        getParamAll: () => [],
-        setParams: () => undefined,
-        getAllParams: () => ({}),
-      });
-
-      const { result, rerender } = renderHook(
-        ({ totalItems }) => usePagination({ totalItems }),
-        {
-          wrapper: TestWrapper,
-          initialProps: { totalItems: 50 },
-        }
-      );
-
-      expect(result.current.totalPages).toBe(6);
-
-      rerender({ totalItems: 100 });
-
-      expect(result.current.totalPages).toBe(12);
-    });
+    expect(setParam.mock.calls.length).toBe(callsBefore);
   });
 });

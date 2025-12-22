@@ -52,7 +52,7 @@ function FormPromoCode() {
     setLocalSuccess(null);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const cleanedPromoCode = promoCode.trim().replace(/\s/g, '');
 
@@ -72,7 +72,7 @@ function FormPromoCode() {
         Если у вас есть промокод на скидку, примените его в этом поле
       </p>
       <div className="basket-form">
-        <form action="#" onSubmit={handleSubmit}>
+        <form action="#" onSubmit={handleFormSubmit}>
           <div className={`custom-input ${localSuccess ? 'is-valid' : ''} ${localError ? 'is-invalid' : ''}`}>
             <label>
               <span className="custom-input__label">Промокод</span>

@@ -16,6 +16,7 @@ type ProductContentProps = {
   rating: number;
   reviewCount: number;
   price: number;
+  offer: FullOfferType;
 };
 
 type ProductTabsProps = {
@@ -31,7 +32,7 @@ type ProductTabsProps = {
 
 type UseOfferTabsReturn = {
   activeTab: string;
-  setTab: (tab: string) => void;
+  setTab: (tab: 'specs' | 'description') => void;
 };
 
 const mockUseOfferTabs = vi.fn<[], UseOfferTabsReturn>();
@@ -57,6 +58,7 @@ vi.mock('./product-tabs', () => ({
 
 describe('Offer', () => {
   const mockSetTab = vi.fn();
+
   const mockOffer: FullOfferType = {
     id: 1,
     name: 'Test Camera',
@@ -109,7 +111,10 @@ describe('Offer', () => {
     it('passes correct image props to ProductImage', () => {
       render(<Offer offer={mockOffer} />);
 
-      expect(mockProductImage).toHaveBeenCalledWith({
+      expect(mockProductImage).toHaveBeenCalledTimes(1);
+      const [props] = mockProductImage.mock.calls[0] as unknown as [ProductImageProps];
+
+      expect(props).toEqual({
         previewImg: mockOffer.previewImg,
         previewImg2x: mockOffer.previewImg2x,
         previewImgWebp: mockOffer.previewImgWebp,
@@ -121,19 +126,21 @@ describe('Offer', () => {
     it('passes correct content props to ProductContent', () => {
       render(<Offer offer={mockOffer} />);
 
-      expect(mockProductContent).toHaveBeenCalledWith({
-        name: mockOffer.name,
-        rating: mockOffer.rating,
-        reviewCount: mockOffer.reviewCount,
-        price: mockOffer.price,
-      });
+      expect(mockProductContent).toHaveBeenCalledTimes(1);
+      const [props] = mockProductContent.mock.calls[0] as unknown as [ProductContentProps];
+
+      expect(props.name).toBe(mockOffer.name);
+      expect(props.rating).toBe(mockOffer.rating);
+      expect(props.reviewCount).toBe(mockOffer.reviewCount);
+      expect(props.price).toBe(mockOffer.price);
+      expect(props.offer).toBe(mockOffer);
     });
 
     it('passes correct tab props to ProductTabs', () => {
       render(<Offer offer={mockOffer} />);
 
-      const call = mockProductTabs.mock.calls[0];
-      const props = call[0];
+      expect(mockProductTabs).toHaveBeenCalledTimes(1);
+      const [props] = mockProductTabs.mock.calls[0] as unknown as [ProductTabsProps];
 
       expect(props.activeTab).toBe('description');
       expect(props.vendorCode).toBe(mockOffer.vendorCode);
@@ -150,12 +157,9 @@ describe('Offer', () => {
     it('calls setTab when onTabChange is triggered', () => {
       render(<Offer offer={mockOffer} />);
 
-      const call = mockProductTabs.mock.calls[0];
-      const props = call[0];
-      const onTabChange = props.onTabChange;
+      const [props] = mockProductTabs.mock.calls[0] as unknown as [ProductTabsProps];
 
-      onTabChange('specs');
-
+      props.onTabChange('specs');
       expect(mockSetTab).toHaveBeenCalledWith('specs');
     });
 
@@ -167,9 +171,7 @@ describe('Offer', () => {
 
       render(<Offer offer={mockOffer} />);
 
-      const call = mockProductTabs.mock.calls[0];
-      const props = call[0];
-
+      const [props] = mockProductTabs.mock.calls[0] as unknown as [ProductTabsProps];
       expect(props.activeTab).toBe('specs');
     });
   });

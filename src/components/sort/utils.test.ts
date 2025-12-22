@@ -73,17 +73,17 @@ describe('sortOffers', () => {
   it('should sort by popularity in ascending order (lowest rating first)', () => {
     const result = sortOffers(mockOffers, 'Popular', 'asc');
 
-    expect(result[0].rating).toBe(4.5);
+    expect(result[0].rating).toBe(3.0);
     expect(result[1].rating).toBe(4.0);
-    expect(result[2].rating).toBe(3.0);
+    expect(result[2].rating).toBe(4.5);
   });
 
   it('should sort by popularity in descending order (highest rating first)', () => {
     const result = sortOffers(mockOffers, 'Popular', 'desc');
 
-    expect(result[0].rating).toBe(3.0);
+    expect(result[0].rating).toBe(4.5);
     expect(result[1].rating).toBe(4.0);
-    expect(result[2].rating).toBe(4.5);
+    expect(result[2].rating).toBe(3.0);
   });
 
   it('should not mutate original array', () => {

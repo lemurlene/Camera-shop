@@ -32,7 +32,7 @@ export const CartItem: React.FC<CartItemProps> = ({ item }) => {
     }
   };
 
-  const handleRemove = () => {
+  const handleItemDelete = () => {
     openModal('delete-from-cart', item.data);
   };
 
@@ -83,7 +83,7 @@ export const CartItem: React.FC<CartItemProps> = ({ item }) => {
       </div>
 
       <button
-        onClick={handleRemove}
+        onClick={handleItemDelete}
         className="cross-btn"
         type="button"
         aria-label="Удалить товар"

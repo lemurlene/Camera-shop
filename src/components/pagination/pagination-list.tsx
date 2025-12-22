@@ -3,52 +3,52 @@ import PaginationNavButton from './pagination-nav-button';
 
 interface PaginationListProps {
   currentPage: number;
-  totalPages: number;
-  paginationRange: (number | string)[];
+  pages: number[];
+
+  showPrev: boolean;
+  showNext: boolean;
+  prevTargetPage: number;
+  nextTargetPage: number;
+
   createPageUrl: (page: number) => string;
   onPageClick: (page: number) => void;
 }
 
 function PaginationList({
   currentPage,
-  totalPages,
-  paginationRange,
+  pages,
+  showPrev,
+  showNext,
+  prevTargetPage,
+  nextTargetPage,
   createPageUrl,
-  onPageClick
+  onPageClick,
 }: PaginationListProps): JSX.Element {
-  let dotsCounter = 0;
-
   return (
     <ul className="pagination__list">
-      {currentPage > 1 && (
+      {showPrev && (
         <PaginationNavButton
           type="prev"
-          targetPage={currentPage - 1}
+          targetPage={prevTargetPage}
           createPageUrl={createPageUrl}
           onPageClick={onPageClick}
         />
       )}
 
-      {paginationRange.map((page) => {
-        if (page === '...') {
-          dotsCounter += 1;
-        }
+      {pages.map((p) => (
+        <PaginationItem
+          key={`page-${p}`}
+          page={p}
+          currentPage={currentPage}
+          createPageUrl={createPageUrl}
+          onPageClick={onPageClick}
+        />
+      ))}
 
-        return (
-          <PaginationItem
-            key={page === '...' ? `dots-${dotsCounter}` : `page-${page}`}
-            page={page}
-            currentPage={currentPage}
-            createPageUrl={createPageUrl}
-            onPageClick={onPageClick}
-          />
-        );
-      })}
-
-      {currentPage < totalPages && (
+      {showNext && (
         <PaginationNavButton
           type="next"
-          targetPage={currentPage + 1}
+          targetPage={nextTargetPage}
           createPageUrl={createPageUrl}
           onPageClick={onPageClick}
         />

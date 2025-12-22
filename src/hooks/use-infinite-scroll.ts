@@ -18,7 +18,7 @@ export function useInfiniteScroll({
       return;
     }
 
-    const handleScroll = () => {
+    const handlePageScroll = () => {
       if (isLoading) {
         return;
       }
@@ -35,7 +35,7 @@ export function useInfiniteScroll({
     let timeoutId: NodeJS.Timeout;
     const debouncedScroll = () => {
       clearTimeout(timeoutId);
-      timeoutId = setTimeout(handleScroll, 100);
+      timeoutId = setTimeout(handlePageScroll, 100);
     };
 
     window.addEventListener('scroll', debouncedScroll, { passive: true });

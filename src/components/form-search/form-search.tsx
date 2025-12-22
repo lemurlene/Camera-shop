@@ -1,10 +1,12 @@
-import { memo, useState, useRef, useEffect, useCallback } from 'react';
+import { memo, useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useAppSelector } from '../../hooks';
 import { selectOffers } from '../../store/offers';
 import { SearchInputMemo } from './search-input';
 import { ResetButtonMemo } from './reset-button';
 import { SearchListMemo } from './search-list';
-import { OfferSearchType } from '../../const/type';
+import type { OfferSearchType } from '../../const/type';
+
+const MIN_CHARS = 3;
 
 function FormSearch() {
   const [isListOpen, setIsListOpen] = useState(false);
@@ -16,21 +18,35 @@ function FormSearch() {
 
   const products = useAppSelector(selectOffers);
 
-  const searchOffers: OfferSearchType[] = products.map((product) => ({
-    id: product.id,
-    name: product.name
-  }));
-
-  const filteredOffers = searchOffers.filter((item) =>
-    item.name.toLowerCase().includes(searchValue.toLowerCase())
+  const searchOffers: OfferSearchType[] = useMemo(
+    () =>
+      products.map((product) => ({
+        id: product.id,
+        name: product.name,
+      })),
+    [products]
   );
+
+  const normalized = searchValue.trim().toLowerCase();
+  const canSearch = normalized.length >= MIN_CHARS;
+
+  const filteredOffers = useMemo(() => {
+    if (!canSearch) {
+      return [];
+    }
+    return searchOffers.filter((item) => item.name.toLowerCase().includes(normalized));
+  }, [canSearch, normalized, searchOffers]);
 
   const formSearchClasses = `form-search ${isListOpen ? 'list-opened' : ''}`;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (listRef.current && !listRef.current.contains(event.target as Node) &&
-        inputRef.current && !inputRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+
+      const clickedInsideList = listRef.current?.contains(target);
+      const clickedInsideInput = inputRef.current?.contains(target);
+
+      if (!clickedInsideList && !clickedInsideInput) {
         setIsListOpen(false);
         setFocusedIndex(-1);
       }
@@ -42,12 +58,13 @@ function FormSearch() {
 
   const handleInputChange = useCallback((value: string) => {
     setSearchValue(value);
-    setIsListOpen(value.length > 0);
+    const nextCanSearch = value.trim().length >= MIN_CHARS;
+    setIsListOpen(nextCanSearch);
     setFocusedIndex(-1);
   }, []);
 
   const handleInputFocus = useCallback(() => {
-    if (searchValue.length > 0) {
+    if (searchValue.trim().length >= MIN_CHARS) {
       setIsListOpen(true);
     }
   }, [searchValue]);
@@ -62,58 +79,57 @@ function FormSearch() {
     setFocusedIndex(index);
   }, []);
 
-  const handleReset = useCallback(() => {
+  const handleFormReset = useCallback(() => {
     setSearchValue('');
     setIsListOpen(false);
     setFocusedIndex(-1);
-    inputRef.current?.focus();
+
+    window.setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
   }, []);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (!isListOpen) {
-      return;
-    }
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (!isListOpen) {
+        return;
+      }
 
-    switch (e.key) {
-      case 'ArrowDown':
-        e.preventDefault();
-        setFocusedIndex((prev) =>
-          prev < filteredOffers.length - 1 ? prev + 1 : 0
-        );
-        break;
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          setFocusedIndex((prev) => (prev < filteredOffers.length - 1 ? prev + 1 : 0));
+          break;
 
-      case 'ArrowUp':
-        e.preventDefault();
-        setFocusedIndex((prev) =>
-          prev > 0 ? prev - 1 : filteredOffers.length - 1
-        );
-        break;
+        case 'ArrowUp':
+          e.preventDefault();
+          setFocusedIndex((prev) => (prev > 0 ? prev - 1 : filteredOffers.length - 1));
+          break;
 
-      case 'Enter':
-        e.preventDefault();
-        if (focusedIndex >= 0 && focusedIndex < filteredOffers.length) {
-          handleSuggestionClick(filteredOffers[focusedIndex]);
-        }
-        break;
+        case 'Enter':
+          e.preventDefault();
+          if (focusedIndex >= 0 && focusedIndex < filteredOffers.length) {
+            handleSuggestionClick(filteredOffers[focusedIndex]);
+          }
+          break;
 
-      case 'Escape':
-        setIsListOpen(false);
-        setFocusedIndex(-1);
-        break;
+        case 'Escape':
+        case 'Tab':
+          setIsListOpen(false);
+          setFocusedIndex(-1);
+          break;
 
-      case 'Tab':
-        setIsListOpen(false);
-        setFocusedIndex(-1);
-        break;
-    }
-  }, [isListOpen, focusedIndex, filteredOffers, handleSuggestionClick]);
+        default:
+          break;
+      }
+    },
+    [isListOpen, focusedIndex, filteredOffers, handleSuggestionClick]
+  );
 
   useEffect(() => {
     if (focusedIndex >= 0 && listRef.current) {
-      const activeItem = listRef.current.children[focusedIndex] as HTMLElement;
-      if (activeItem) {
-        activeItem.scrollIntoView({ block: 'nearest' });
-      }
+      const activeItem = listRef.current.children[focusedIndex] as HTMLElement | undefined;
+      activeItem?.scrollIntoView({ block: 'nearest' });
     }
   }, [focusedIndex]);
 
@@ -128,7 +144,9 @@ function FormSearch() {
           onKeyDown={handleKeyDown}
           inputRef={inputRef}
         />
-        <ResetButtonMemo searchValue={searchValue} onReset={handleReset} />
+
+        <ResetButtonMemo searchValue={searchValue} onReset={handleFormReset} />
+
         <SearchListMemo
           isListOpen={isListOpen}
           searchValue={searchValue}
@@ -144,5 +162,4 @@ function FormSearch() {
 }
 
 export const FormSearchMemo = memo(FormSearch);
-
 export default FormSearchMemo;

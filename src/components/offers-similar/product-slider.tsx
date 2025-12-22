@@ -19,7 +19,6 @@ function ProductSlider({ offers }: ProductSliderProps): JSX.Element {
         navigation={{
           nextEl: '.product-similar__slider .slider-controls--next',
           prevEl: '.product-similar__slider .slider-controls--prev',
-          disabledClass: 'disabled'
         }}
         slidesPerView={Setting.ProductSimilarCount}
         slidesPerGroup={Setting.ProductSimilarCount}

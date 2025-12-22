@@ -13,7 +13,7 @@ export const ErrorOrderModal: React.FC<ErrorOrderModalProps> = ({ error }) => {
   const { closeModal } = useModal();
   const dispatch = useAppDispatch();
 
-  const handleRetry = () => {
+  const handleButtonRetry = () => {
     dispatch(resetOrder());
     closeModal();
   };
@@ -26,7 +26,7 @@ export const ErrorOrderModal: React.FC<ErrorOrderModalProps> = ({ error }) => {
         <button
           className="btn btn--purple modal__btn"
           type="button"
-          onClick={handleRetry}
+          onClick={handleButtonRetry}
         >
           Попробовать снова
         </button>
