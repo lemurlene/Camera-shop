@@ -42,6 +42,7 @@ const mocks = vi.hoisted(() => ({
   selectCoupon: vi.fn<[unknown], string | null>(),
   selectDiscount: vi.fn<[unknown], number>(),
   selectIsCouponLoading: vi.fn<[unknown], boolean>(),
+  selectCouponStatus: vi.fn<[unknown], LoadingStatus>(),
   setCoupon: vi.fn<[string], Action>(),
   setDiscount: vi.fn<[number], Action>(),
   resetCoupon: vi.fn<[], Action>(),
@@ -73,10 +74,11 @@ vi.mock('../../contexts', () => ({
   useModal: mocks.useModal,
 }));
 
-vi.mock('../../store/promo-code', () => ({
+vi.mock('../../store/coupon', () => ({
   selectCoupon: mocks.selectCoupon,
   selectDiscount: mocks.selectDiscount,
   selectIsCouponLoading: mocks.selectIsCouponLoading,
+  selectCouponStatus: mocks.selectCouponStatus,
   setCoupon: mocks.setCoupon,
   setDiscount: mocks.setDiscount,
   resetCoupon: mocks.resetCoupon,
@@ -108,7 +110,7 @@ vi.mock('../../components/loader-overlay', () => ({
   default: () => <div data-testid="loader" />,
 }));
 
-vi.mock('../../components/form-promo-code', () => ({
+vi.mock('../../components/form-coupon', () => ({
   __esModule: true,
   default: () => <div data-testid="promo-form" />,
 }));
@@ -134,6 +136,11 @@ describe('BasketPage', () => {
     mocks.selectIsCouponLoading.mockImplementation((state) => {
       void state;
       return store.isCouponLoading;
+    });
+
+    mocks.selectCouponStatus.mockImplementation((state) => {
+      void state;
+      return store.CouponStatus as unknown as LoadingStatus;
     });
 
     mocks.selectOrderError.mockImplementation((state) => {
@@ -305,7 +312,7 @@ describe('BasketPage', () => {
 
   it('reads saved Coupon/discount from localStorage and dispatches setCoupon/setDiscount', async () => {
     localStorage.setItem('appliedCoupon', 'camera-444');
-    localStorage.setItem('CouponDiscount', '15');
+    localStorage.setItem('couponDiscount', '15');
 
     setStore({ Coupon: 'camera-444', discount: 15 });
 

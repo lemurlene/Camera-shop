@@ -3,15 +3,16 @@ import { useAppSelector, useAppDispatch, } from '../../hooks';
 import Breadcrumbs from '../../components/breadcrumbs';
 import { CartItem } from '../../components/cart';
 import LoaderOverlay from '../../components/loader-overlay';
-import FormCouponMemo from '../../components/form-promo-code';
+import FormCouponMemo from '../../components/form-coupon';
 import { useCart, useModal } from '../../contexts';
 import {
   selectCoupon,
   selectDiscount,
   setDiscount, setCoupon,
   resetCoupon,
+  selectCouponStatus,
   selectIsCouponLoading
-} from '../../store/promo-code';
+} from '../../store/coupon';
 import {
   selectOrderError,
   selectIsOrderLoading,
@@ -20,7 +21,7 @@ import {
   resetOrder
 } from '../../store/order';
 import { sendOrder } from '../../store/api-action';
-
+import { LoadingStatus } from '../../const/enum';
 
 function BasketPage(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -29,6 +30,7 @@ function BasketPage(): JSX.Element {
 
   const discountPercent = useAppSelector(selectDiscount) || 0;
   const coupon = useAppSelector(selectCoupon);
+  const couponStatus = useAppSelector(selectCouponStatus);
 
   const orderError = useAppSelector(selectOrderError);
   const isOrderLoading = useAppSelector(selectIsOrderLoading);
@@ -44,6 +46,11 @@ function BasketPage(): JSX.Element {
   const isCouponLoading = useAppSelector(selectIsCouponLoading);
   const isLoading = isOrderLoading || isCouponLoading;
 
+  useEffect(() => () => {
+    if (couponStatus === LoadingStatus.Error) {
+      dispatch(resetCoupon());
+    }
+  }, [dispatch, couponStatus]);
 
   useEffect(() => {
     if (isLoading) {

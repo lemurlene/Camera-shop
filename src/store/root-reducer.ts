@@ -8,7 +8,7 @@ import { offerSlice } from './offer/offer.slice';
 import { offersPromoSlice } from './offers-promo/offers-promo.slice';
 import { offersSimilarSlice } from './offers-similar/offers-similar.slice';
 import reviewsSlice from './reviews/reviews.slice';
-import { couponSlice } from './promo-code/promo-code.slice';
+import { couponSlice } from './coupon/coupon.slice';
 import { orderSlice } from './order/order.slice';
 
 const rootReducer = combineReducers({

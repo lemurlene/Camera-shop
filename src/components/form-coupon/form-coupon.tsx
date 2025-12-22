@@ -1,51 +1,47 @@
-import { memo, useState, useEffect, useRef } from 'react';
+import { memo, useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import {
   resetCoupon,
   selectCoupon,
-  selectDiscount,
   selectCouponStatus,
   selectCouponError
-} from '../../store/promo-code';
+} from '../../store/coupon';
 import { checkCoupon } from '../../store/api-action';
 import { LoadingStatus } from '../../const/enum';
 
 function FormCoupon() {
   const dispatch = useAppDispatch();
+
   const coupon = useAppSelector(selectCoupon);
-  const discount = useAppSelector(selectDiscount);
   const status = useAppSelector(selectCouponStatus);
   const error = useAppSelector(selectCouponError);
 
-  const [Coupon, setCoupon] = useState(coupon || '');
+  const [value, setValue] = useState<string>(coupon ?? '');
   const [localError, setLocalError] = useState<string | null>(null);
   const [localSuccess, setLocalSuccess] = useState<string | null>(null);
 
-  const isFirstRender = useRef(true);
-
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-
     if (status === LoadingStatus.Loading) {
       setLocalError(null);
       setLocalSuccess(null);
-    } else if (status === LoadingStatus.Success) {
+    }
+
+    if (status === LoadingStatus.Success) {
       setLocalError(null);
       setLocalSuccess('Промокод принят!');
-    } else if (status === LoadingStatus.Error) {
-      setLocalError(error || 'Неверный промокод');
-      setLocalSuccess(null);
     }
-  }, [status, discount, error]);
+
+    if (status === LoadingStatus.Error) {
+      setLocalSuccess(null);
+      setLocalError(error ?? 'Неверный промокод');
+    }
+  }, [status, error]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\s/g, '');
-    setCoupon(value);
+    const nextValue = e.target.value.replace(/\s/g, '');
+    setValue(nextValue);
 
-    if (coupon || discount > 0 || localError || localSuccess) {
+    if (status !== LoadingStatus.Idle) {
       dispatch(resetCoupon());
     }
 
@@ -53,16 +49,15 @@ function FormCoupon() {
     setLocalSuccess(null);
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const cleanedCoupon = Coupon.trim().replace(/\s/g, '');
 
-    if (!cleanedCoupon) {
+    if (!value.trim()) {
       setLocalError('Введите промокод');
       return;
     }
 
-    dispatch(checkCoupon(cleanedCoupon));
+    dispatch(checkCoupon(value));
   };
 
   const isLoading = status === LoadingStatus.Loading;
@@ -72,35 +67,38 @@ function FormCoupon() {
       <p className="title title--h4">
         Если у вас есть промокод на скидку, примените его в этом поле
       </p>
+
       <div className="basket-form">
-        <form action="#" onSubmit={handleFormSubmit}>
-          <div className={`custom-input ${localSuccess ? 'is-valid' : ''} ${localError ? 'is-invalid' : ''}`}>
+        <form onSubmit={handleSubmit}>
+          <div
+            className={`custom-input
+              ${localSuccess ? 'is-valid' : ''}
+              ${localError ? 'is-invalid' : ''}`}
+          >
             <label>
               <span className="custom-input__label">Промокод</span>
               <input
                 type="text"
-                name="promo"
-                placeholder="Введите промокод"
-                value={Coupon}
+                value={value}
                 onChange={handleInputChange}
+                placeholder="Введите промокод"
                 disabled={isLoading}
               />
             </label>
+
             {localError && (
-              <p className="custom-input__error">
-                {localError}
-              </p>
+              <p className="custom-input__error">{localError}</p>
             )}
+
             {localSuccess && (
-              <p className="custom-input__success">
-                {localSuccess}
-              </p>
+              <p className="custom-input__success">{localSuccess}</p>
             )}
           </div>
+
           <button
             className="btn"
             type="submit"
-            disabled={isLoading || !Coupon.trim()}
+            disabled={isLoading || !value.trim()}
           >
             {isLoading ? 'Проверка...' : 'Применить'}
           </button>

@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { FormCouponMemo } from './form-promo-code';
+import FormCouponMemo from './';
 import { LoadingStatus } from '../../const/enum';
 
 type Action = {
@@ -43,7 +43,7 @@ vi.mock('../../hooks', () => ({
   useAppSelector: (selector: Selector): unknown => mocks.useAppSelector(selector),
 }));
 
-vi.mock('../../store/promo-code', () => ({
+vi.mock('../../store/coupon', () => ({
   resetCoupon: (): Action => mocks.resetCoupon(),
   selectCoupon: (state: unknown): string | null => mocks.selectCoupon(state),
   selectDiscount: (state: unknown): number => mocks.selectDiscount(state),
@@ -145,7 +145,7 @@ describe('FormCoupon component', () => {
   });
 
   it('dispatches resetCoupon on input change when Coupon/discount already applied', () => {
-    setSelectors({ Coupon: 'camera-333', discount: 15, status: LoadingStatus.Idle, error: null });
+    setSelectors({ Coupon: 'camera-333', discount: 15, status: LoadingStatus.Success, error: null });
 
     render(<InnerFormCoupon />);
 

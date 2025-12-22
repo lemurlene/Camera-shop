@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { AnyAction } from '@reduxjs/toolkit';
-import { couponSlice, resetCoupon, setCoupon, setDiscount } from './promo-code.slice';
+import { couponSlice, resetCoupon, setCoupon, setDiscount } from './coupon.slice';
 import { checkCoupon } from '../api-action';
 import { LoadingStatusEnum } from '../../const/type';
 import { LoadingStatus } from '../../const/enum';

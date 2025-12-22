@@ -6,7 +6,7 @@ import {
   selectCouponStatus,
   selectCouponError,
   selectIsCouponLoading,
-} from './';
+} from '.';
 import { NameSpace } from '../const';
 import { LoadingStatus } from '../../const/enum';
 

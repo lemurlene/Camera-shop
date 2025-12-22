@@ -1,9 +1,9 @@
 import {
   selectCoupon, selectDiscount, selectCouponStatus, selectCouponError, selectIsCouponLoading
-} from './promo-code.selector';
+} from './coupon.selector';
 import {
   resetCoupon, setCoupon, setDiscount, couponSlice
-} from './promo-code.slice';
+} from './coupon.slice';
 
 export {
   selectCoupon, selectDiscount, selectCouponStatus, selectCouponError, selectIsCouponLoading,
