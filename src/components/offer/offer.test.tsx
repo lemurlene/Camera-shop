@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import Offer from './offer';
 import type { FullOfferType } from '../../const/type';
+import { mockOffers } from '../../mocks/mock-offers';
 
 type ProductImageProps = {
   previewImg: string;
@@ -58,23 +59,7 @@ vi.mock('./product-tabs', () => ({
 
 describe('Offer', () => {
   const mockSetTab = vi.fn();
-
-  const mockOffer: FullOfferType = {
-    id: 1,
-    name: 'Test Camera',
-    vendorCode: 'TEST123',
-    type: 'Цифровая',
-    category: 'Фотокамера',
-    level: 'Нулевой',
-    description: 'Test description',
-    price: 1000,
-    previewImg: 'test.jpg',
-    previewImg2x: 'test@2x.jpg',
-    previewImgWebp: 'test.webp',
-    previewImgWebp2x: 'test@2x.webp',
-    rating: 4.5,
-    reviewCount: 10,
-  };
+  const mockOffer = mockOffers[0];
 
   beforeEach(() => {
     vi.clearAllMocks();

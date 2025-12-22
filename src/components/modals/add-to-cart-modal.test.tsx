@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { AddToCartModal } from './add-to-cart-modal';
 import type { FullOfferType } from '../../const/type';
+import { mockOffers } from '../../mocks/mock-offers';
 
 const { mockModal, mockBasketCardMemo, mockButtonAddBasketMemo, mockUseModal } = vi.hoisted(() => ({
   mockModal: vi.fn(),
@@ -29,23 +30,7 @@ vi.mock('../../contexts', () => ({
 
 describe('AddToCartModal', () => {
   const mockCloseModal = vi.fn();
-
-  const mockProductData: FullOfferType = {
-    id: 1,
-    name: 'Test Camera',
-    vendorCode: 'TEST123',
-    type: 'Цифровая',
-    category: 'Фотокамера',
-    description: 'Test description',
-    level: 'Нулевой',
-    price: 1000,
-    rating: 4.5,
-    reviewCount: 10,
-    previewImg: 'test.jpg',
-    previewImg2x: 'test@2x.jpg',
-    previewImgWebp: 'test.webp',
-    previewImgWebp2x: 'test@2x.webp',
-  };
+  const mockProductData = mockOffers[0];
 
   beforeEach(() => {
     vi.clearAllMocks();

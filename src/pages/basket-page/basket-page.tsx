@@ -3,7 +3,7 @@ import { useAppSelector, useAppDispatch, } from '../../hooks';
 import Breadcrumbs from '../../components/breadcrumbs';
 import { CartItem } from '../../components/cart';
 import LoaderOverlay from '../../components/loader-overlay';
-import FormPromoCodeMemo from '../../components/form-promo-code';
+import FormCouponMemo from '../../components/form-promo-code';
 import { useCart, useModal } from '../../contexts';
 import {
   selectCoupon,
@@ -114,7 +114,6 @@ function BasketPage(): JSX.Element {
     dispatch(sendOrder(orderData));
   };
 
-
   return (
     <div className="page-content" data-testid="basket-page">
       {isLoading && <LoaderOverlay />}
@@ -128,7 +127,7 @@ function BasketPage(): JSX.Element {
             ))}
           </ul>
           <div className="basket__summary">
-            <FormPromoCodeMemo />
+            <FormCouponMemo />
             <div className="basket__summary-order">
               <p className="basket__summary-item">
                 <span className="basket__summary-text">Всего:</span>

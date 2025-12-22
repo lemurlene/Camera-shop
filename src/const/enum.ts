@@ -17,3 +17,10 @@ export enum APIRoute {
   Orders = '/orders',
   Comments = '/reviews',
 }
+
+export enum LoadingStatus {
+  Idle = 'IDLE',
+  Loading = 'LOADING',
+  Success = 'SUCCESS',
+  Error = 'ERROR'
+}

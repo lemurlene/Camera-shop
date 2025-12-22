@@ -1,26 +1,33 @@
+import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { BrowserRouter } from 'react-router-dom';
-import { describe, it, expect, vi } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import PaginationNavButton from './pagination-nav-button';
-import type { ReactNode } from 'react';
 
 vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual<object>('react-router-dom');
+  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
   return {
     ...actual,
     Link: ({
       to,
       children,
       onClick,
-      className
+      className,
     }: {
       to: string;
       children: ReactNode;
-      onClick?: () => void;
+      onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
       className?: string;
     }) => (
-      <a href={to} onClick={onClick} className={className}>
+      <a
+        href={to}
+        className={className}
+        onClick={(e) => {
+          e.preventDefault();
+          onClick?.(e);
+        }}
+      >
         {children}
       </a>
     ),
@@ -34,37 +41,26 @@ describe('PaginationNavButton', () => {
     onPageClick: vi.fn(),
   };
 
-  const renderWithRouter = (component: React.ReactElement) => render(<BrowserRouter>{component}</BrowserRouter>);
+  const renderWithRouter = (ui: React.ReactElement) =>
+    render(<MemoryRouter>{ui}</MemoryRouter>);
 
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('should render previous button with correct label', () => {
-    renderWithRouter(
-      <PaginationNavButton {...defaultProps} type="prev" />
-    );
-
-    const button = screen.getByText('Назад');
-    expect(button).toBeInTheDocument();
+    renderWithRouter(<PaginationNavButton {...defaultProps} type="prev" />);
+    expect(screen.getByText('Назад')).toBeInTheDocument();
   });
 
   it('should render next button with correct label', () => {
-    renderWithRouter(
-      <PaginationNavButton {...defaultProps} type="next" />
-    );
-
-    const button = screen.getByText('Далее');
-    expect(button).toBeInTheDocument();
+    renderWithRouter(<PaginationNavButton {...defaultProps} type="next" />);
+    expect(screen.getByText('Далее')).toBeInTheDocument();
   });
 
   it('should render with correct link URL', () => {
-    renderWithRouter(
-      <PaginationNavButton {...defaultProps} type="next" />
-    );
-
-    const link = screen.getByRole('link');
-    expect(link).toHaveAttribute('href', '/page/2');
+    renderWithRouter(<PaginationNavButton {...defaultProps} type="next" />);
+    expect(screen.getByRole('link')).toHaveAttribute('href', '/page/2');
   });
 
   it('should call onPageClick when clicked', async () => {
@@ -72,29 +68,21 @@ describe('PaginationNavButton', () => {
     const onPageClick = vi.fn();
 
     renderWithRouter(
-      <PaginationNavButton
-        {...defaultProps}
-        type="next"
-        onPageClick={onPageClick}
-      />
+      <PaginationNavButton {...defaultProps} type="next" onPageClick={onPageClick} />
     );
 
-    const link = screen.getByRole('link');
-    await user.click(link);
+    await user.click(screen.getByRole('link'));
 
     expect(onPageClick).toHaveBeenCalledTimes(1);
     expect(onPageClick).toHaveBeenCalledWith(2);
   });
 
   it('should have correct CSS classes', () => {
-    renderWithRouter(
-      <PaginationNavButton {...defaultProps} type="next" />
-    );
+    renderWithRouter(<PaginationNavButton {...defaultProps} type="next" />);
 
-    const listItem = screen.getByRole('listitem');
+    expect(screen.getByRole('listitem')).toHaveClass('pagination__item');
+
     const link = screen.getByRole('link');
-
-    expect(listItem).toHaveClass('pagination__item');
     expect(link).toHaveClass('pagination__link');
     expect(link).toHaveClass('pagination__link--text');
   });
@@ -103,41 +91,24 @@ describe('PaginationNavButton', () => {
     const createPageUrl = vi.fn((page: number) => `/custom/page/${page}`);
 
     renderWithRouter(
-      <PaginationNavButton
-        type="next"
-        targetPage={5}
-        createPageUrl={createPageUrl}
-        onPageClick={vi.fn()}
-      />
+      <PaginationNavButton type="next" targetPage={5} createPageUrl={createPageUrl} onPageClick={vi.fn()} />
     );
 
     expect(createPageUrl).toHaveBeenCalledWith(5);
-
-    const link = screen.getByRole('link');
-    expect(link).toHaveAttribute('href', '/custom/page/5');
+    expect(screen.getByRole('link')).toHaveAttribute('href', '/custom/page/5');
   });
 
   it('should handle different target pages correctly', () => {
     const { rerender } = renderWithRouter(
-      <PaginationNavButton
-        type="next"
-        targetPage={1}
-        createPageUrl={(page) => `/page/${page}`}
-        onPageClick={vi.fn()}
-      />
+      <PaginationNavButton type="next" targetPage={1} createPageUrl={(page) => `/page/${page}`} onPageClick={vi.fn()} />
     );
 
     expect(screen.getByRole('link')).toHaveAttribute('href', '/page/1');
 
     rerender(
-      <BrowserRouter>
-        <PaginationNavButton
-          type="prev"
-          targetPage={10}
-          createPageUrl={(page) => `/page/${page}`}
-          onPageClick={vi.fn()}
-        />
-      </BrowserRouter>
+      <MemoryRouter>
+        <PaginationNavButton type="prev" targetPage={10} createPageUrl={(page) => `/page/${page}`} onPageClick={vi.fn()} />
+      </MemoryRouter>
     );
 
     expect(screen.getByRole('link')).toHaveAttribute('href', '/page/10');

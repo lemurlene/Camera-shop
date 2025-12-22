@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { makeFakeStore } from '../../mocks/make-fake-store';
 import { NameSpace } from '../const';
-import type { ReviewType } from '../../const/type';
+import { mockReviews } from '../../mocks/mock-reviews';
 
 import {
   selectOffersComments,
@@ -13,22 +13,10 @@ import {
 
 describe('reviews selectors', () => {
   it('selectOffersComments returns offerComments', () => {
-    const fakeComments = [
-      {
-        id: '1',
-        userName: 'Alex',
-        advantage: 'fast',
-        disadvantage: 'none',
-        review: 'ok',
-        rating: 5,
-        createAt: '2024-01-01T10:00:00.000Z',
-        cameraId: 1,
-      },
-    ] as unknown as ReviewType[];
 
     const state = makeFakeStore({
       [NameSpace.Reviews]: {
-        offerComments: fakeComments,
+        offerComments: mockReviews,
         isLoadingComments: false,
         isLoadingComment: false,
         commentsError: null,
@@ -36,7 +24,7 @@ describe('reviews selectors', () => {
       },
     });
 
-    expect(selectOffersComments(state)).toBe(fakeComments);
+    expect(selectOffersComments(state)).toBe(mockReviews);
   });
 
   it('selectCommentsOffersStatus returns isLoadingComments', () => {

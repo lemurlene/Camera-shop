@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { FullOfferType } from '../../const/type';
 import { ModalContainer } from './modal-container';
 import { useModal } from '../../contexts';
+import { mockOffers } from '../../mocks/mock-offers';
 
 vi.mock('../../contexts', () => ({
   useModal: vi.fn(),
@@ -57,25 +58,10 @@ describe('ModalContainer', () => {
   });
 
   it('renders AddToCartModal for add-to-cart type', () => {
-    const productData: Partial<FullOfferType> = {
-      id: 1,
-      name: 'Test Camera',
-      vendorCode: 'TEST123',
-      type: 'Цифровая',
-      category: 'Фотокамера',
-      level: 'Нулевой',
-      description: 'Test description',
-      price: 1000,
-      previewImg: 'test.jpg',
-      previewImg2x: 'test@2x.jpg',
-      previewImgWebp: 'test.webp',
-      previewImgWebp2x: 'test@2x.webp',
-      rating: 4.5,
-      reviewCount: 10,
-    };
+    const productData = mockOffers[0];
 
     mockUseModal.mockReturnValue({
-      modalState: { type: 'add-to-cart', productData: productData as FullOfferType },
+      modalState: { type: 'add-to-cart', productData: productData },
       openModal: vi.fn(),
       closeModal: vi.fn(),
     });

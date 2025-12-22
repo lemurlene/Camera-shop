@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { initialState } from './const';
 import { NameSpace } from '../const';
 import { checkCoupon } from '../api-action';
+import { LoadingStatus } from '../../const/enum';
 
 export const couponSlice = createSlice({
   name: NameSpace.Coupon,
@@ -10,7 +11,7 @@ export const couponSlice = createSlice({
     resetCoupon: (state) => {
       state.coupon = null;
       state.discount = 0;
-      state.status = 'idle';
+      state.status = LoadingStatus.Idle;
       state.error = null;
     },
     setCoupon: (state, action: PayloadAction<string>) => {
@@ -23,17 +24,17 @@ export const couponSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(checkCoupon.pending, (state) => {
-        state.status = 'loading';
+        state.status = LoadingStatus.Loading;
         state.error = null;
       })
       .addCase(checkCoupon.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.status = LoadingStatus.Success;
         state.discount = action.payload;
         state.coupon = action.meta.arg;
         state.error = null;
       })
       .addCase(checkCoupon.rejected, (state, action) => {
-        state.status = 'failed';
+        state.status = LoadingStatus.Error;
         state.error = action.payload as string || 'Неверный промокод';
         state.coupon = null;
         state.discount = 0;

@@ -1,4 +1,5 @@
 import { Categories, Levels, Types } from './const';
+import { LoadingStatus } from './enum';
 
 export type Category = keyof typeof Categories | null;
 export type Level = keyof typeof Levels;
@@ -72,3 +73,5 @@ export type ErrorResponse = {
 };
 
 export type ReviewPostDto = Omit<ReviewType, 'id' | 'createAt'>;
+
+export type LoadingStatusEnum = typeof LoadingStatus[keyof typeof LoadingStatus];

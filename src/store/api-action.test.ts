@@ -1,4 +1,3 @@
-// api-action.test.ts
 import { configureMockStore } from '@jedmao/redux-mock-store';
 import MockAdapter from 'axios-mock-adapter';
 import thunk from 'redux-thunk';
@@ -47,7 +46,6 @@ describe('Async actions', () => {
   beforeEach(() => {
     mockAxiosAdapter.reset();
 
-    // state для этих thunk-ов не критичен; приводим к State через cast
     store = mockStoreCreator({} as unknown as State);
   });
 
@@ -201,7 +199,7 @@ describe('Async actions', () => {
   });
 
   describe('checkCoupon', () => {
-    it('dispatches pending and fulfilled when server responds 200; sends cleaned coupon in body', async () => {
+    it('dispatches pending and fulfilled when server responds 200; sends cleaned Coupon in body', async () => {
       let receivedBody: unknown = null;
 
       mockAxiosAdapter.onPost(APIRoute.Coupons).reply((config) => {
@@ -248,7 +246,7 @@ describe('Async actions', () => {
   });
 
   describe('sendOrder', () => {
-    it('dispatches pending and fulfilled when server responds 200; trims coupon and keeps camerasIds', async () => {
+    it('dispatches pending and fulfilled when server responds 200; trims Coupon and keeps camerasIds', async () => {
       let receivedBody: unknown = null;
 
       mockAxiosAdapter.onPost(APIRoute.Orders).reply((config) => {
@@ -274,7 +272,7 @@ describe('Async actions', () => {
       });
     });
 
-    it('dispatches pending and fulfilled and does NOT send coupon when coupon is null', async () => {
+    it('dispatches pending and fulfilled and does NOT send Coupon when Coupon is null', async () => {
       let receivedBody: unknown = null;
 
       mockAxiosAdapter.onPost(APIRoute.Orders).reply((config) => {

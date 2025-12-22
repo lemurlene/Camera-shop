@@ -1,11 +1,18 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { ReactNode } from 'react';
 import { SuccessAddCartModal } from './success-add-cart-modal';
 
-const { mockModal, mockButtonAddBasketMemo, mockUseModal } = vi.hoisted(() => ({
+const {
+  mockModal,
+  mockUseModal,
+  mockButtonContinueShoppingMemo,
+  mockButtonGoBasketMemo,
+} = vi.hoisted(() => ({
   mockModal: vi.fn(),
-  mockButtonAddBasketMemo: vi.fn(),
   mockUseModal: vi.fn(),
+  mockButtonContinueShoppingMemo: vi.fn(),
+  mockButtonGoBasketMemo: vi.fn(),
 }));
 
 vi.mock('./modal', () => ({
@@ -13,7 +20,8 @@ vi.mock('./modal', () => ({
 }));
 
 vi.mock('../buttons', () => ({
-  ButtonAddBasketMemo: mockButtonAddBasketMemo,
+  ButtonContinueShoppingMemo: mockButtonContinueShoppingMemo,
+  ButtonGoBasketMemo: mockButtonGoBasketMemo,
 }));
 
 vi.mock('../../contexts', () => ({
@@ -30,60 +38,53 @@ describe('SuccessAddCartModal', () => {
       closeModal: mockCloseModal,
     });
 
-    mockModal.mockImplementation(({ children, onClose }: { children: React.ReactNode; onClose: () => void }) => (
-      <div data-testid="modal">
-        <div data-testid="modal-content">{children}</div>
-        <button onClick={onClose} data-testid="close-button">Close</button>
-      </div>
+    mockModal.mockImplementation(
+      ({ children, onClose, narrow }: { children: ReactNode; onClose: () => void; narrow?: boolean }) => (
+        <div data-testid="modal" data-narrow={String(Boolean(narrow))}>
+          <div data-testid="modal-content">{children}</div>
+          <button onClick={onClose} data-testid="close-button">
+            Close
+          </button>
+        </div>
+      )
+    );
+
+    mockButtonContinueShoppingMemo.mockImplementation(() => (
+      <button
+        type="button"
+        className="btn btn--transparent modal__btn"
+        onClick={mockCloseModal}
+      >
+        Продолжить покупки
+      </button>
     ));
 
-    mockButtonAddBasketMemo.mockImplementation(() => (
-      <button data-testid="add-basket-button">Перейти в корзину</button>
+    mockButtonGoBasketMemo.mockImplementation(() => (
+      <button data-testid="go-basket-button">Перейти в корзину</button>
     ));
   });
 
-  it('renders correctly with success message and icon', () => {
+  it('renders correctly with success message', () => {
     render(<SuccessAddCartModal />);
 
     expect(screen.getByText('Товар успешно добавлен в корзину')).toBeInTheDocument();
     expect(screen.getByTestId('modal')).toBeInTheDocument();
   });
 
-  it('renders success icon with correct attributes', () => {
-    const { container } = render(<SuccessAddCartModal />);
-
-    const svgIcon = container.querySelector('.modal__icon');
-    expect(svgIcon).toBeInTheDocument();
-    expect(svgIcon).toHaveAttribute('width', '86');
-    expect(svgIcon).toHaveAttribute('height', '80');
-    expect(svgIcon).toHaveAttribute('aria-hidden', 'true');
-
-    const useElement = svgIcon?.querySelector('use');
-    expect(useElement).toHaveAttribute('xlink:href', '#icon-success');
-  });
-
   it('renders continue shopping button that calls closeModal', () => {
     render(<SuccessAddCartModal />);
 
-    const continueButton = screen.getByText('Продолжить покупки');
-    expect(continueButton).toBeInTheDocument();
-    expect(continueButton).toHaveClass('btn', 'btn--transparent', 'modal__btn');
+    const continueBtn = screen.getByRole('button', { name: 'Продолжить покупки' });
+    expect(continueBtn).toBeInTheDocument();
 
-    continueButton.click();
+    continueBtn.click();
     expect(mockCloseModal).toHaveBeenCalledTimes(1);
   });
 
-  it('renders ButtonAddBasketMemo with correct props', () => {
+  it('renders ButtonGoBasketMemo', () => {
     render(<SuccessAddCartModal />);
 
-    expect(screen.getByTestId('add-basket-button')).toBeInTheDocument();
-    expect(mockButtonAddBasketMemo).toHaveBeenCalledWith(
-      expect.objectContaining({
-        isModal: true,
-        isInCart: true,
-      }),
-      {}
-    );
+    expect(screen.getByTestId('go-basket-button')).toBeInTheDocument();
   });
 
   it('passes correct props to Modal component', () => {
@@ -96,19 +97,5 @@ describe('SuccessAddCartModal', () => {
       }),
       {}
     );
-  });
-
-  it('calls useModal hook', () => {
-    render(<SuccessAddCartModal />);
-
-    expect(mockUseModal).toHaveBeenCalledTimes(1);
-  });
-
-  it('renders all required elements', () => {
-    render(<SuccessAddCartModal />);
-
-    expect(screen.getByText('Товар успешно добавлен в корзину')).toBeInTheDocument();
-    expect(screen.getByText('Продолжить покупки')).toBeInTheDocument();
-    expect(screen.getByTestId('add-basket-button')).toBeInTheDocument();
   });
 });

@@ -1,6 +1,8 @@
+import { LoadingStatusEnum } from '../../const/type';
+
 export type CouponState = {
   coupon: string | null;
   discount: number;
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  status: LoadingStatusEnum;
   error: string | null;
 };

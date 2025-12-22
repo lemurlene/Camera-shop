@@ -8,15 +8,16 @@ import {
   selectCouponError
 } from '../../store/promo-code';
 import { checkCoupon } from '../../store/api-action';
+import { LoadingStatus } from '../../const/enum';
 
-function FormPromoCode() {
+function FormCoupon() {
   const dispatch = useAppDispatch();
   const coupon = useAppSelector(selectCoupon);
   const discount = useAppSelector(selectDiscount);
   const status = useAppSelector(selectCouponStatus);
   const error = useAppSelector(selectCouponError);
 
-  const [promoCode, setPromoCode] = useState(coupon || '');
+  const [Coupon, setCoupon] = useState(coupon || '');
   const [localError, setLocalError] = useState<string | null>(null);
   const [localSuccess, setLocalSuccess] = useState<string | null>(null);
 
@@ -28,13 +29,13 @@ function FormPromoCode() {
       return;
     }
 
-    if (status === 'loading') {
+    if (status === LoadingStatus.Loading) {
       setLocalError(null);
       setLocalSuccess(null);
-    } else if (status === 'succeeded') {
+    } else if (status === LoadingStatus.Success) {
       setLocalError(null);
       setLocalSuccess('Промокод принят!');
-    } else if (status === 'failed') {
+    } else if (status === LoadingStatus.Error) {
       setLocalError(error || 'Неверный промокод');
       setLocalSuccess(null);
     }
@@ -42,7 +43,7 @@ function FormPromoCode() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\s/g, '');
-    setPromoCode(value);
+    setCoupon(value);
 
     if (coupon || discount > 0 || localError || localSuccess) {
       dispatch(resetCoupon());
@@ -54,17 +55,17 @@ function FormPromoCode() {
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const cleanedPromoCode = promoCode.trim().replace(/\s/g, '');
+    const cleanedCoupon = Coupon.trim().replace(/\s/g, '');
 
-    if (!cleanedPromoCode) {
+    if (!cleanedCoupon) {
       setLocalError('Введите промокод');
       return;
     }
 
-    dispatch(checkCoupon(cleanedPromoCode));
+    dispatch(checkCoupon(cleanedCoupon));
   };
 
-  const isLoading = status === 'loading';
+  const isLoading = status === LoadingStatus.Loading;
 
   return (
     <div className="basket__promo">
@@ -80,7 +81,7 @@ function FormPromoCode() {
                 type="text"
                 name="promo"
                 placeholder="Введите промокод"
-                value={promoCode}
+                value={Coupon}
                 onChange={handleInputChange}
                 disabled={isLoading}
               />
@@ -99,7 +100,7 @@ function FormPromoCode() {
           <button
             className="btn"
             type="submit"
-            disabled={isLoading || !promoCode.trim()}
+            disabled={isLoading || !Coupon.trim()}
           >
             {isLoading ? 'Проверка...' : 'Применить'}
           </button>
@@ -109,4 +110,4 @@ function FormPromoCode() {
   );
 }
 
-export const FormPromoCodeMemo = memo(FormPromoCode);
+export const FormCouponMemo = memo(FormCoupon);

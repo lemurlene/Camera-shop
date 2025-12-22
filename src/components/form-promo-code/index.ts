@@ -1,4 +1,4 @@
-import { FormPromoCodeMemo } from './form-promo-code';
-export default FormPromoCodeMemo;
+import { FormCouponMemo } from './form-promo-code';
+export default FormCouponMemo;
 
 

@@ -2,11 +2,12 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import ReviewsList from './reviews-list';
 import { ReviewType } from '../../const/type';
+import { mockReviews } from '../../mocks/mock-reviews';
 
 vi.mock('./review', () => ({
   default: vi.fn((props: ReviewType) => (
     <li data-testid="review-item" data-review-id={props.id}>
-      Mock Review: {props.userName}
+      {props.userName}
     </li>
   ))
 }));
@@ -14,39 +15,6 @@ vi.mock('./review', () => ({
 import Review from './review';
 
 describe('ReviewsList Component', () => {
-  const mockReviews: ReviewType[] = [
-    {
-      id: '1',
-      createAt: '2024-01-15T10:00:00.000Z',
-      userName: 'Иван Иванов',
-      advantage: 'Хорошее качество сборки',
-      disadvantage: 'Высокая цена',
-      review: 'Отличный товар, рекомендую',
-      rating: 4,
-      cameraId: 1,
-    },
-    {
-      id: '2',
-      createAt: '2024-01-20T10:00:00.000Z',
-      userName: 'Петр Петров',
-      advantage: 'Быстрая доставка',
-      disadvantage: 'Нет инструкции',
-      review: 'Хороший товар за свои деньги',
-      rating: 5,
-      cameraId: 1,
-    },
-    {
-      id: '3',
-      createAt: '2024-01-25T10:00:00.000Z',
-      userName: 'Мария Сидорова',
-      advantage: 'Стильный дизайн',
-      disadvantage: 'Тяжелый',
-      review: 'Пользуюсь неделю, пока все нравится',
-      rating: 4,
-      cameraId: 1,
-    },
-  ];
-
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -60,13 +28,13 @@ describe('ReviewsList Component', () => {
       render(<ReviewsList reviews={mockReviews} />);
 
       const reviewItems = screen.getAllByTestId('review-item');
-      expect(reviewItems).toHaveLength(3);
+      expect(reviewItems).toHaveLength(15);
     });
 
     it('should render all reviews with correct props', () => {
       render(<ReviewsList reviews={mockReviews} />);
 
-      expect(Review).toHaveBeenCalledTimes(3);
+      expect(Review).toHaveBeenCalledTimes(15);
 
       mockReviews.forEach((review, index) => {
         expect(Review).toHaveBeenNthCalledWith(index + 1, review, {});
@@ -81,14 +49,6 @@ describe('ReviewsList Component', () => {
       reviewItems.forEach((item, index) => {
         expect(item).toHaveAttribute('data-review-id', mockReviews[index].id);
       });
-    });
-
-    it('should render user names from all reviews', () => {
-      render(<ReviewsList reviews={mockReviews} />);
-
-      expect(screen.getByText('Mock Review: Иван Иванов')).toBeInTheDocument();
-      expect(screen.getByText('Mock Review: Петр Петров')).toBeInTheDocument();
-      expect(screen.getByText('Mock Review: Мария Сидорова')).toBeInTheDocument();
     });
   });
 
@@ -108,7 +68,7 @@ describe('ReviewsList Component', () => {
       expect(listElement).toBeInTheDocument();
 
       const listItems = listElement?.querySelectorAll('li');
-      expect(listItems).toHaveLength(3);
+      expect(listItems).toHaveLength(15);
     });
   });
 

@@ -2,7 +2,7 @@ import {
   selectCoupon, selectDiscount, selectCouponStatus, selectCouponError, selectIsCouponLoading
 } from './promo-code.selector';
 import {
-  couponSlice, resetCoupon, setCoupon, setDiscount
+  resetCoupon, setCoupon, setDiscount, couponSlice
 } from './promo-code.slice';
 
 export {

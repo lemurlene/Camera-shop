@@ -6,11 +6,12 @@ import {
   selectCouponStatus,
   selectCouponError,
   selectIsCouponLoading,
-} from './promo-code.selector';
+} from './';
 import { NameSpace } from '../const';
+import { LoadingStatus } from '../../const/enum';
 
 describe('promo-code selectors', () => {
-  it('selectCoupon returns coupon', () => {
+  it('selectCoupon returns Coupon', () => {
     const store = makeFakeStore();
 
     const state = {
@@ -43,12 +44,12 @@ describe('promo-code selectors', () => {
       [NameSpace.Coupon]: {
         coupon: 'camera-333',
         discount: 15,
-        status: 'succeeded',
+        status: LoadingStatus.Success,
         error: null,
       },
     });
 
-    expect(selectCouponStatus(fakeState)).toBe('succeeded');
+    expect(selectCouponStatus(fakeState)).toBe(LoadingStatus.Success);
   });
 
   it('selectCouponError returns error', () => {
@@ -56,7 +57,7 @@ describe('promo-code selectors', () => {
       [NameSpace.Coupon]: {
         coupon: '123456',
         discount: 0,
-        status: 'loading',
+        status: LoadingStatus.Loading,
         error: 'Неверный промокод',
       },
     });
@@ -69,7 +70,7 @@ describe('promo-code selectors', () => {
       [NameSpace.Coupon]: {
         coupon: '123456',
         discount: 0,
-        status: 'loading',
+        status: LoadingStatus.Loading,
         error: null,
       },
     });
@@ -82,7 +83,7 @@ describe('promo-code selectors', () => {
       [NameSpace.Coupon]: {
         coupon: null,
         discount: 0,
-        status: 'idle',
+        status: LoadingStatus.Idle,
         error: null,
       },
     });
@@ -90,3 +91,4 @@ describe('promo-code selectors', () => {
     expect(selectIsCouponLoading(fakeState)).toBe(false);
   });
 });
+

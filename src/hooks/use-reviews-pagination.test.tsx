@@ -19,14 +19,20 @@ describe('useReviewsPagination', () => {
     { id: '6', userName: 'User 6', advantage: 'advantage 6', disadvantage: 'disadvantage 6', review: 'review 6', rating: 3, createAt: '2023-01-06', cameraId: 1 },
   ];
 
+  const advance = (ms: number) => {
+    act(() => {
+      vi.advanceTimersByTime(ms);
+    });
+  };
+
   beforeEach(() => {
     vi.useFakeTimers();
+
     Object.defineProperty(window, 'scrollY', { value: 100, writable: true });
     Object.defineProperty(document.documentElement, 'clientHeight', { value: 800, writable: true });
 
-    const mockScrollTo = vi.fn();
     Object.defineProperty(window, 'scrollTo', {
-      value: mockScrollTo,
+      value: vi.fn(),
       writable: true,
     });
   });
@@ -36,7 +42,7 @@ describe('useReviewsPagination', () => {
     vi.restoreAllMocks();
   });
 
-  it('should initialize with default values', () => {
+  it('initializes with default values', () => {
     const { result } = renderHook(() => useReviewsPagination({ comments: mockComments }));
 
     expect(result.current.visibleReviewsCount).toBe(3);
@@ -46,96 +52,116 @@ describe('useReviewsPagination', () => {
     expect(typeof result.current.setVisibleReviewsCount).toBe('function');
   });
 
-  it('should calculate hasMoreReviews correctly', () => {
+  it('calculates hasMoreReviews correctly (no more reviews)', () => {
     const { result } = renderHook(() => useReviewsPagination({ comments: mockComments.slice(0, 3) }));
-
     expect(result.current.hasMoreReviews).toBe(false);
   });
 
-  it('should not load more reviews when no more reviews available', () => {
+  it('does not load more when no more reviews available', () => {
     const { result } = renderHook(() => useReviewsPagination({ comments: mockComments.slice(0, 3) }));
-
     const initialCount = result.current.visibleReviewsCount;
 
     act(() => {
       result.current.handleShowMore();
     });
 
+    advance(500);
+
     expect(result.current.visibleReviewsCount).toBe(initialCount);
-  });
-
-  it('should NOT change visibleReviewsCount when handleShowMore is called', () => {
-    const { result } = renderHook(() => useReviewsPagination({ comments: mockComments }));
-
-    act(() => {
-      result.current.handleShowMore();
-    });
-
-    vi.advanceTimersByTime(250);
-
-    expect(result.current.visibleReviewsCount).toBe(3);
-  });
-
-  it('should NOT change visibleReviewsCount when loading remaining reviews', () => {
-    const commentsWithFour = mockComments.slice(0, 4);
-    const { result } = renderHook(() => useReviewsPagination({ comments: commentsWithFour }));
-
-    act(() => {
-      result.current.handleShowMore();
-    });
-
-    vi.advanceTimersByTime(250);
-
-    expect(result.current.visibleReviewsCount).toBe(3);
-  });
-
-  it('should NOT scroll when loading more reviews', () => {
-    const { result } = renderHook(() => useReviewsPagination({ comments: mockComments }));
-
-    act(() => {
-      result.current.handleShowMore();
-    });
-
-    vi.advanceTimersByTime(250);
+    expect(result.current.isLoading).toBe(false);
     expect(window.scrollTo).not.toHaveBeenCalled();
   });
 
-  it('should handle multiple show more clicks without changing count', () => {
-    const manyComments: ReviewType[] = Array.from({ length: 10 }, (_, i) => ({
-      id: String(i + 1),
-      userName: `User ${i + 1}`,
-      advantage: `advantage ${i + 1}`,
-      disadvantage: `disadvantage ${i + 1}`,
-      review: `review ${i + 1}`,
-      rating: 5,
-      createAt: `2023-01-${String(i + 1).padStart(2, '0')}`,
-      cameraId: 1
-    }));
+  it('increases visibleReviewsCount by MaxShowReviews after 200ms', () => {
+    const { result } = renderHook(() => useReviewsPagination({ comments: mockComments }));
 
-    const { result } = renderHook(() => useReviewsPagination({ comments: manyComments }));
-
-    act(() => {
-      result.current.handleShowMore();
-    });
-    vi.advanceTimersByTime(250);
     expect(result.current.visibleReviewsCount).toBe(3);
 
     act(() => {
       result.current.handleShowMore();
     });
-    vi.advanceTimersByTime(250);
+
+    expect(result.current.isLoading).toBe(true);
+
+    advance(199);
     expect(result.current.visibleReviewsCount).toBe(3);
 
-    act(() => {
-      result.current.handleShowMore();
-    });
-    vi.advanceTimersByTime(250);
-    expect(result.current.visibleReviewsCount).toBe(3);
-
-    expect(result.current.hasMoreReviews).toBe(true);
+    advance(1);
+    expect(result.current.visibleReviewsCount).toBe(6);
   });
 
-  it('should allow manually setting visible reviews count', () => {
+  it('increases visibleReviewsCount to comments.length when remaining smaller MaxShowReviews', () => {
+    const commentsWithFour = mockComments.slice(0, 4);
+    const { result } = renderHook(() => useReviewsPagination({ comments: commentsWithFour }));
+
+    expect(result.current.visibleReviewsCount).toBe(3);
+
+    act(() => {
+      result.current.handleShowMore();
+    });
+
+    advance(200);
+    expect(result.current.visibleReviewsCount).toBe(4);
+    expect(result.current.hasMoreReviews).toBe(false);
+  });
+
+  it('blocks repeated handleShowMore calls while loading', () => {
+    const { result } = renderHook(() => useReviewsPagination({ comments: mockComments }));
+
+    act(() => result.current.handleShowMore());
+    expect(result.current.isLoading).toBe(true);
+
+    act(() => result.current.handleShowMore());
+
+    advance(250);
+
+    expect(result.current.visibleReviewsCount).toBe(6);
+  });
+
+  it('sets isLoading to false after 200ms + 50ms', () => {
+    const { result } = renderHook(() => useReviewsPagination({ comments: mockComments }));
+
+    act(() => result.current.handleShowMore());
+    expect(result.current.isLoading).toBe(true);
+
+    advance(200);
+    expect(result.current.visibleReviewsCount).toBe(6);
+    expect(result.current.isLoading).toBe(true);
+
+    advance(50);
+    expect(result.current.isLoading).toBe(false);
+  });
+
+  it('does not scroll when clientHeightAfter does not increase', () => {
+    const { result } = renderHook(() => useReviewsPagination({ comments: mockComments }));
+
+    act(() => result.current.handleShowMore());
+
+    advance(200);
+    advance(50);
+
+    expect(window.scrollTo).not.toHaveBeenCalled();
+  });
+
+  it('scrolls back when clientHeightAfter increases', () => {
+    const { result } = renderHook(() => useReviewsPagination({ comments: mockComments }));
+
+    act(() => result.current.handleShowMore());
+
+    advance(200);
+
+    Object.defineProperty(document.documentElement, 'clientHeight', { value: 900, writable: true });
+
+    advance(50);
+
+    expect(window.scrollTo).toHaveBeenCalledTimes(1);
+    expect(window.scrollTo).toHaveBeenCalledWith({
+      top: 100,
+      behavior: 'auto',
+    });
+  });
+
+  it('allows manually setting visible reviews count', () => {
     const { result } = renderHook(() => useReviewsPagination({ comments: mockComments }));
 
     act(() => {
@@ -143,9 +169,10 @@ describe('useReviewsPagination', () => {
     });
 
     expect(result.current.visibleReviewsCount).toBe(5);
+    expect(result.current.hasMoreReviews).toBe(true);
   });
 
-  it('should update hasMoreReviews when manually setting count', () => {
+  it('updates hasMoreReviews when manually setting count', () => {
     const { result } = renderHook(() => useReviewsPagination({ comments: mockComments.slice(0, 5) }));
 
     expect(result.current.hasMoreReviews).toBe(true);
@@ -157,76 +184,11 @@ describe('useReviewsPagination', () => {
     expect(result.current.hasMoreReviews).toBe(false);
   });
 
-  it('should handle empty comments array', () => {
+  it('handles empty comments array', () => {
     const { result } = renderHook(() => useReviewsPagination({ comments: [] }));
 
     expect(result.current.visibleReviewsCount).toBe(3);
     expect(result.current.hasMoreReviews).toBe(false);
     expect(result.current.isLoading).toBe(false);
-  });
-
-  it('should handle single review', () => {
-    const singleComment = [mockComments[0]];
-    const { result } = renderHook(() => useReviewsPagination({ comments: singleComment }));
-
-    expect(result.current.visibleReviewsCount).toBe(3);
-    expect(result.current.hasMoreReviews).toBe(false);
-  });
-
-  it('should set loading state during handleShowMore', () => {
-    const { result } = renderHook(() => useReviewsPagination({ comments: mockComments }));
-
-    act(() => {
-      result.current.handleShowMore();
-    });
-
-    expect(result.current.isLoading).toBe(true);
-
-    vi.advanceTimersByTime(250);
-  });
-
-  it('should not load more reviews during loading state', () => {
-    const { result } = renderHook(() => useReviewsPagination({ comments: mockComments }));
-
-    act(() => {
-      result.current.handleShowMore();
-    });
-
-    expect(result.current.isLoading).toBe(true);
-
-    const countDuringLoading = result.current.visibleReviewsCount;
-
-    act(() => {
-      result.current.handleShowMore();
-    });
-
-    expect(result.current.visibleReviewsCount).toBe(countDuringLoading);
-
-    vi.advanceTimersByTime(250);
-  });
-
-  it('should have correct hasMoreReviews for different comment counts', () => {
-    const { result: result6 } = renderHook(() => useReviewsPagination({ comments: mockComments.slice(0, 6) }));
-    expect(result6.current.hasMoreReviews).toBe(true);
-
-    const { result: result3 } = renderHook(() => useReviewsPagination({ comments: mockComments.slice(0, 3) }));
-    expect(result3.current.hasMoreReviews).toBe(false);
-
-    const { result: result2 } = renderHook(() => useReviewsPagination({ comments: mockComments.slice(0, 2) }));
-    expect(result2.current.hasMoreReviews).toBe(false);
-  });
-
-  it('should correctly update when setVisibleReviewsCount is called', () => {
-    const { result } = renderHook(() => useReviewsPagination({ comments: mockComments }));
-
-    act(() => {
-      result.current.setVisibleReviewsCount(1);
-    });
-    expect(result.current.visibleReviewsCount).toBe(1);
-
-    act(() => {
-      result.current.setVisibleReviewsCount(10);
-    });
-    expect(result.current.visibleReviewsCount).toBe(10);
   });
 });

@@ -18,7 +18,6 @@ export const ErrorOrderModal: React.FC<ErrorOrderModalProps> = ({ error }) => {
     closeModal();
   };
 
-
   return (
     <Modal onClose={closeModal}>
       <p className="title title--h4"> {error}</p>

@@ -4,6 +4,7 @@ import Reviews from './reviews';
 import { ReviewType } from '../../const/type';
 import { useReviewsPagination, useInfiniteScroll } from '../../hooks';
 import { sortReviewsByDate, getVisibleReviews } from './utils';
+import { mockReviews } from '../../mocks/mock-reviews';
 
 vi.mock('../../hooks', () => ({
   useReviewsPagination: vi.fn(),
@@ -19,7 +20,7 @@ vi.mock('./reviews-list', () => ({
   default: vi.fn(({ reviews }: { reviews: ReviewType[] }) => (
     <div data-testid="reviews-list">
       {reviews.map((review: ReviewType) => (
-        <div key={review.id} data-testid={`review-${review.id}`}>
+        <div key={review.id} data-testid={review.id}>
           {review.userName}
         </div>
       ))}
@@ -83,29 +84,6 @@ interface PaginationReturnType {
 }
 
 describe('Reviews', () => {
-  const mockComments: ReviewType[] = [
-    {
-      id: '1',
-      createAt: '2024-01-15T10:00:00.000Z',
-      userName: 'User1',
-      advantage: 'advantage1',
-      disadvantage: 'disadvantage1',
-      review: 'review1',
-      rating: 4,
-      cameraId: 1,
-    },
-    {
-      id: '2',
-      createAt: '2024-01-20T10:00:00.000Z',
-      userName: 'User2',
-      advantage: 'advantage2',
-      disadvantage: 'disadvantage2',
-      review: 'review2',
-      rating: 5,
-      cameraId: 1,
-    },
-  ];
-
   const defaultPaginationProps: PaginationReturnType = {
     visibleReviewsCount: 2,
     isLoading: false,
@@ -133,7 +111,7 @@ describe('Reviews', () => {
 
   describe('component rendering', () => {
     it('should render all main components', () => {
-      render(<Reviews comments={mockComments} />);
+      render(<Reviews comments={mockReviews} />);
 
       expect(screen.getByTestId('reviews-header')).toBeInTheDocument();
       expect(screen.getByTestId('reviews-list')).toBeInTheDocument();
@@ -142,14 +120,15 @@ describe('Reviews', () => {
     });
 
     it('should render correct number of reviews', () => {
-      render(<Reviews comments={mockComments} />);
 
-      expect(screen.getByTestId('review-1')).toBeInTheDocument();
-      expect(screen.getByTestId('review-2')).toBeInTheDocument();
+      render(<Reviews comments={[mockReviews[0], mockReviews[1]]} />);
+
+      expect(screen.getByTestId('a0a22b2b-67e7-4d89-a696-6e3fb8cea5c7')).toBeInTheDocument();
+      expect(screen.getByTestId('2fa729cc-8977-4e46-abd3-c326474a7480')).toBeInTheDocument();
     });
 
     it('should render section with correct class name', () => {
-      render(<Reviews comments={mockComments} />);
+      render(<Reviews comments={mockReviews} />);
 
       const section = screen.getByTestId('reviews-section');
       expect(section).toHaveClass('review-block');
@@ -158,15 +137,15 @@ describe('Reviews', () => {
 
   describe('hooks integration', () => {
     it('should call useReviewsPagination with correct arguments', () => {
-      render(<Reviews comments={mockComments} />);
+      render(<Reviews comments={mockReviews} />);
 
       expect(mockUseReviewsPagination).toHaveBeenCalledWith({
-        comments: mockComments,
+        comments: mockReviews,
       });
     });
 
     it('should call useInfiniteScroll with correct arguments', () => {
-      render(<Reviews comments={mockComments} />);
+      render(<Reviews comments={mockReviews} />);
 
       expect(mockUseInfiniteScroll).toHaveBeenCalledWith({
         hasMore: defaultPaginationProps.hasMoreReviews,
@@ -177,12 +156,12 @@ describe('Reviews', () => {
     });
 
     it('should call sortReviewsByDate and getVisibleReviews with correct arguments', () => {
-      const sortedReviews: ReviewType[] = [...mockComments].reverse();
+      const sortedReviews: ReviewType[] = [...mockReviews].reverse();
       mockSortReviewsByDate.mockReturnValue(sortedReviews);
 
-      render(<Reviews comments={mockComments} />);
+      render(<Reviews comments={mockReviews} />);
 
-      expect(mockSortReviewsByDate).toHaveBeenCalledWith(mockComments);
+      expect(mockSortReviewsByDate).toHaveBeenCalledWith(mockReviews);
       expect(mockGetVisibleReviews).toHaveBeenCalledWith(
         sortedReviews,
         defaultPaginationProps.visibleReviewsCount
@@ -197,7 +176,7 @@ describe('Reviews', () => {
         hasMoreReviews: true,
       });
 
-      render(<Reviews comments={mockComments} />);
+      render(<Reviews comments={mockReviews} />);
 
       const loadMoreButton = screen.getByTestId('load-more-button');
       expect(loadMoreButton).not.toBeDisabled();
@@ -209,7 +188,7 @@ describe('Reviews', () => {
         hasMoreReviews: false,
       });
 
-      render(<Reviews comments={mockComments} />);
+      render(<Reviews comments={mockReviews} />);
 
       const loadMoreButton = screen.getByTestId('load-more-button');
       expect(loadMoreButton).toBeDisabled();
@@ -221,7 +200,7 @@ describe('Reviews', () => {
         isLoading: true,
       });
 
-      render(<Reviews comments={mockComments} />);
+      render(<Reviews comments={mockReviews} />);
 
       const loadMoreButton = screen.getByTestId('load-more-button');
       expect(loadMoreButton).toBeDisabled();
@@ -234,7 +213,7 @@ describe('Reviews', () => {
         handleShowMore: mockHandleShowMore,
       });
 
-      render(<Reviews comments={mockComments} />);
+      render(<Reviews comments={mockReviews} />);
 
       const loadMoreButton = screen.getByTestId('load-more-button');
       fireEvent.click(loadMoreButton);
@@ -250,7 +229,7 @@ describe('Reviews', () => {
         hasMoreReviews: true,
       });
 
-      render(<Reviews comments={mockComments} />);
+      render(<Reviews comments={mockReviews} />);
 
       const scrollSentinel = screen.getByTestId('scroll-sentinel');
       expect(scrollSentinel).toHaveAttribute('data-visible', 'true');
@@ -262,7 +241,7 @@ describe('Reviews', () => {
         hasMoreReviews: false,
       });
 
-      render(<Reviews comments={mockComments} />);
+      render(<Reviews comments={mockReviews} />);
 
       const scrollSentinel = screen.getByTestId('scroll-sentinel');
       expect(scrollSentinel).toHaveAttribute('data-visible', 'false');
@@ -275,7 +254,7 @@ describe('Reviews', () => {
         handleShowMore: mockHandleShowMore,
       });
 
-      render(<Reviews comments={mockComments} />);
+      render(<Reviews comments={mockReviews} />);
 
       const scrollSentinel = screen.getByTestId('scroll-sentinel');
       fireEvent.click(scrollSentinel);
@@ -300,12 +279,12 @@ describe('Reviews', () => {
       render(<Reviews comments={[]} />);
 
       expect(screen.getByTestId('reviews-list')).toBeInTheDocument();
-      expect(screen.queryByTestId('review-1')).not.toBeInTheDocument();
-      expect(screen.queryByTestId('review-2')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('a0a22b2b-67e7-4d89-a696-6e3fb8cea5c7')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('2fa729cc-8977-4e46-abd3-c326474a7480')).not.toBeInTheDocument();
     });
 
     it('should handle single review', () => {
-      const singleComment: ReviewType[] = [mockComments[0]];
+      const singleComment: ReviewType[] = [mockReviews[0]];
       const singlePaginationProps: PaginationReturnType = {
         visibleReviewsCount: 1,
         isLoading: false,
@@ -315,21 +294,21 @@ describe('Reviews', () => {
       };
 
       mockUseReviewsPagination.mockReturnValue(singlePaginationProps);
-      mockGetVisibleReviews.mockReturnValue([mockComments[0]]);
+      mockGetVisibleReviews.mockReturnValue([mockReviews[0]]);
 
       render(<Reviews comments={singleComment} />);
 
-      expect(screen.getByTestId('review-1')).toBeInTheDocument();
-      expect(screen.queryByTestId('review-2')).not.toBeInTheDocument();
+      expect(screen.getByTestId('a0a22b2b-67e7-4d89-a696-6e3fb8cea5c7')).toBeInTheDocument();
+      expect(screen.queryByTestId('2fa729cc-8977-4e46-abd3-c326474a748')).not.toBeInTheDocument();
     });
   });
 
   describe('integration with utility functions', () => {
     it('should pass sorted reviews to getVisibleReviews', () => {
-      const sortedReviews: ReviewType[] = [...mockComments].reverse();
+      const sortedReviews: ReviewType[] = [...mockReviews].reverse();
       mockSortReviewsByDate.mockReturnValue(sortedReviews);
 
-      render(<Reviews comments={mockComments} />);
+      render(<Reviews comments={mockReviews} />);
 
       expect(mockGetVisibleReviews).toHaveBeenCalledWith(
         sortedReviews,
@@ -338,13 +317,13 @@ describe('Reviews', () => {
     });
 
     it('should pass visible reviews to ReviewsList', () => {
-      const visibleReviews: ReviewType[] = [mockComments[0]];
+      const visibleReviews: ReviewType[] = [mockReviews[0]];
       mockGetVisibleReviews.mockReturnValue(visibleReviews);
 
-      render(<Reviews comments={mockComments} />);
+      render(<Reviews comments={[mockReviews[0], mockReviews[1]]} />);
 
-      expect(screen.getByTestId('review-1')).toBeInTheDocument();
-      expect(screen.queryByTestId('review-2')).not.toBeInTheDocument();
+      expect(screen.getByTestId('a0a22b2b-67e7-4d89-a696-6e3fb8cea5c7')).toBeInTheDocument();
+      expect(screen.queryByTestId('2fa729cc-8977-4e46-abd3-c326474a7480')).not.toBeInTheDocument();
     });
   });
 });

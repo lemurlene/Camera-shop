@@ -56,6 +56,8 @@ function App(): JSX.Element {
     };
   }, [dispatch]);
 
+  const withInit = (page: JSX.Element) => (isInitialized ? page : <LoadingPage />);
+
   return (
     <HelmetProvider>
       <BrowserRouter>
@@ -66,37 +68,13 @@ function App(): JSX.Element {
             ) : (
               <Routes>
                 <Route path={AppRoute.Root} element={<Layout />}>
-                  {!isInitialized ? (
-                    <Route index element={<LoadingPage />} />
-                  ) : (
-                    <>
-                      <Route index element={<MainPage />} />
-                      <Route
-                        path={AppRoute.Catalog}
-                        element={<MainPage />}
-                      />
-                      <Route
-                        path={AppRoute.Offer}
-                        element={<OfferPage />}
-                      />
-                      <Route
-                        path={AppRoute.Error404}
-                        element={<NotFoundPage />}
-                      />
-                      <Route
-                        path={AppRoute.Guarantees}
-                        element={<DevelopmentPage />}
-                      />
-                      <Route
-                        path={AppRoute.Delivery}
-                        element={<DevelopmentPage />}
-                      />
-                      <Route
-                        path={AppRoute.Basket}
-                        element={<BasketPage />}
-                      />
-                    </>
-                  )}
+                  <Route index element={withInit(<MainPage />)} />
+                  <Route path={AppRoute.Catalog} element={withInit(<MainPage />)} />
+                  <Route path={AppRoute.Offer} element={withInit(<OfferPage />)} />
+                  <Route path={AppRoute.Guarantees} element={withInit(<DevelopmentPage />)} />
+                  <Route path={AppRoute.Delivery} element={withInit(<DevelopmentPage />)} />
+                  <Route path={AppRoute.Basket} element={withInit(<BasketPage />)} />
+                  <Route path={AppRoute.Error404} element={withInit(<NotFoundPage />)} />
                 </Route>
               </Routes>
             )}

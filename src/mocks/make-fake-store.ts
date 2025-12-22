@@ -1,5 +1,6 @@
 import { State } from '../store/type';
 import { DefaultSort } from '../components/sort/const';
+import { LoadingStatus } from '../const/enum';
 
 export const makeFakeStore = (initialState?: Partial<State>): State => ({
   FILTERS: {
@@ -46,11 +47,11 @@ export const makeFakeStore = (initialState?: Partial<State>): State => ({
   COUPON: {
     coupon: null,
     discount: 0,
-    status: 'idle',
+    status: LoadingStatus.Idle,
     error: null,
   },
   ORDER: {
-    status: 'idle',
+    status: LoadingStatus.Idle,
     error: null,
   },
   ...initialState,

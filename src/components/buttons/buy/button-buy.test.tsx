@@ -52,8 +52,6 @@ describe('ButtonBuy component', () => {
 
     const button = screen.getByRole('button');
 
-    // текст/класс/иконка берутся из ButtonBuyConfig.Buy
-    // поэтому проверяем то, что стабильно: кнопка есть и вызывает openModal
     expect(button).toHaveAttribute('type', 'button');
     expect(button.className).toContain('btn');
     expect(button.className).toContain('product-card__btn');

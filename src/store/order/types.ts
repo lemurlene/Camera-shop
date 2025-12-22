@@ -1,9 +1,11 @@
+import { LoadingStatusEnum } from '../../const/type';
+
 export type OrderState = {
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  status: LoadingStatusEnum;
   error: string | null;
 };
 
 export type OrderRequest = {
   camerasIds: number[];
-  coupon: string | null;
+  Coupon: string | null;
 };

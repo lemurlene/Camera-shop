@@ -9,16 +9,18 @@ import {
   selectIsOrderFailed,
 } from './';
 
+import { LoadingStatus } from '../../const/enum';
+
 describe('order selectors', () => {
   it('selectOrderStatus returns status from state', () => {
     const fakeState = makeFakeStore({
       [NameSpace.Order]: {
-        status: 'loading',
+        status: LoadingStatus.Loading,
         error: null,
       },
     });
 
-    expect(selectOrderStatus(fakeState)).toBe('loading');
+    expect(selectOrderStatus(fakeState)).toBe(LoadingStatus.Loading);
   });
 
   it('selectOrderStatus returns idle if slice is missing', () => {
@@ -27,13 +29,13 @@ describe('order selectors', () => {
 
     delete (state)[NameSpace.Order];
 
-    expect(selectOrderStatus(state as unknown as ReturnType<typeof makeFakeStore>)).toBe('idle');
+    expect(selectOrderStatus(state as unknown as ReturnType<typeof makeFakeStore>)).toBe(LoadingStatus.Idle);
   });
 
   it('selectOrderError returns error from state', () => {
     const fakeState = makeFakeStore({
       [NameSpace.Order]: {
-        status: 'failed',
+        status: LoadingStatus.Error,
         error: 'Ошибка при оформлении заказа',
       },
     });
@@ -52,7 +54,7 @@ describe('order selectors', () => {
   it('selectIsOrderLoading returns true when status is loading', () => {
     const fakeState = makeFakeStore({
       [NameSpace.Order]: {
-        status: 'loading',
+        status: LoadingStatus.Loading,
         error: null,
       },
     });
@@ -63,7 +65,7 @@ describe('order selectors', () => {
   it('selectIsOrderSucceeded returns true when status is succeeded', () => {
     const fakeState = makeFakeStore({
       [NameSpace.Order]: {
-        status: 'succeeded',
+        status: LoadingStatus.Success,
         error: null,
       },
     });
@@ -74,7 +76,7 @@ describe('order selectors', () => {
   it('selectIsOrderFailed returns true when status is failed', () => {
     const fakeState = makeFakeStore({
       [NameSpace.Order]: {
-        status: 'failed',
+        status: LoadingStatus.Error,
         error: null,
       },
     });

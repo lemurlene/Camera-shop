@@ -165,7 +165,7 @@ describe('useInfiniteScroll', () => {
 
     expect(mockOnLoadMore).not.toHaveBeenCalled();
 
-    setScrollMetrics(1, 1000, 1000); // 1000 - (1 + 1000) = -1 < 0
+    setScrollMetrics(1, 1000, 1000);
     triggerScroll();
 
     expect(mockOnLoadMore).toHaveBeenCalledTimes(1);
@@ -385,7 +385,7 @@ describe('useInfiniteScroll', () => {
     triggerScroll();
     expect(mockOnLoadMore).not.toHaveBeenCalled();
 
-    setScrollMetrics(2000, 1000, 3000); // 3000 - (2000 + 1000) = 0 < 500
+    setScrollMetrics(2000, 1000, 3000);
     triggerScroll();
     expect(mockOnLoadMore).toHaveBeenCalledTimes(1);
   });

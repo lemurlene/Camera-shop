@@ -1,7 +1,8 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 import BasketPage from './basket-page';
-type CouponStatus = 'idle' | 'loading' | 'succeeded' | 'failed';
+import { LoadingStatusEnum } from '../../const/type';
+import { LoadingStatus } from '../../const/enum';
 
 type Action = {
   type: string;
@@ -11,7 +12,7 @@ type Action = {
 type Selector<T = unknown> = (state: unknown) => T;
 
 type StoreMock = {
-  coupon: string | null;
+  Coupon: string | null;
   discount: number;
   isCouponLoading: boolean;
 
@@ -20,8 +21,8 @@ type StoreMock = {
   isOrderSucceeded: boolean;
   isOrderFailed: boolean;
 
-  couponStatus: CouponStatus;
-  couponError: string | null;
+  CouponStatus: LoadingStatusEnum;
+  CouponError: string | null;
 };
 
 const mocks = vi.hoisted(() => ({
@@ -55,7 +56,7 @@ const mocks = vi.hoisted(() => ({
     [
       {
         camerasIds: number[];
-        coupon: string | null;
+        Coupon: string | null;
       }
     ],
     Action
@@ -124,7 +125,7 @@ describe('BasketPage', () => {
 
     mocks.selectCoupon.mockImplementation((state) => {
       void state;
-      return store.coupon;
+      return store.Coupon;
     });
     mocks.selectDiscount.mockImplementation((state) => {
       void state;
@@ -172,7 +173,7 @@ describe('BasketPage', () => {
     document.body.className = '';
 
     store = {
-      coupon: null,
+      Coupon: null,
       discount: 0,
       isCouponLoading: false,
 
@@ -181,16 +182,16 @@ describe('BasketPage', () => {
       isOrderSucceeded: false,
       isOrderFailed: false,
 
-      couponStatus: 'idle',
-      couponError: null,
+      CouponStatus: LoadingStatus.Idle,
+      CouponError: null,
     };
 
     mocks.useAppDispatch.mockReturnValue(dispatch);
     mocks.useModal.mockReturnValue({ openModal });
 
-    mocks.setCoupon.mockImplementation((coupon) => ({ type: 'coupon/setCoupon', payload: coupon }));
-    mocks.setDiscount.mockImplementation((d) => ({ type: 'coupon/setDiscount', payload: d }));
-    mocks.resetCoupon.mockImplementation(() => ({ type: 'coupon/reset' }));
+    mocks.setCoupon.mockImplementation((Coupon) => ({ type: 'Coupon/setCoupon', payload: Coupon }));
+    mocks.setDiscount.mockImplementation((d) => ({ type: 'Coupon/setDiscount', payload: d }));
+    mocks.resetCoupon.mockImplementation(() => ({ type: 'Coupon/reset' }));
 
     mocks.resetOrder.mockImplementation(() => ({ type: 'order/reset' }));
 
@@ -215,12 +216,12 @@ describe('BasketPage', () => {
   });
 
   it('shows correct totals with discount', () => {
-    setStore({ discount: 10 }); // 10%
+    setStore({ discount: 10 });
     render(<BasketPage />);
 
     const totalPrice = 7000;
-    const discountAmount = Math.round((totalPrice * 10) / 100); // 700
-    const finalPrice = totalPrice - discountAmount; // 6300
+    const discountAmount = Math.round((totalPrice * 10) / 100);
+    const finalPrice = totalPrice - discountAmount;
 
     const getDigits = (el: Element | null) => (el?.textContent ?? '').replace(/\D/g, '');
 
@@ -243,15 +244,15 @@ describe('BasketPage', () => {
   });
 
   it('disables order button when basket is empty', () => {
-    setCart([]); // пусто
+    setCart([]);
     render(<BasketPage />);
 
     const btn = screen.getByRole('button', { name: /оформить заказ/i });
     expect(btn).toBeDisabled();
   });
 
-  it('dispatches sendOrder with camerasIds and coupon on order submit', () => {
-    setStore({ coupon: 'camera-333' });
+  it('dispatches sendOrder with camerasIds and Coupon on order submit', () => {
+    setStore({ Coupon: 'camera-333' });
     render(<BasketPage />);
 
     const btn = screen.getByRole('button', { name: /оформить заказ/i });
@@ -279,7 +280,7 @@ describe('BasketPage', () => {
     expect(document.body.classList.contains('scroll-lock')).toBe(false);
   });
 
-  it('on success: clears cart, resets coupon & order and opens success modal', async () => {
+  it('on success: clears cart, resets Coupon & order and opens success modal', async () => {
     setStore({ isOrderSucceeded: true });
 
     render(<BasketPage />);
@@ -287,7 +288,7 @@ describe('BasketPage', () => {
     await waitFor(() => {
       expect(clearCart).toHaveBeenCalledTimes(1);
       expect(openModal).toHaveBeenCalledWith('success-order');
-      expect(dispatch).toHaveBeenCalledWith({ type: 'coupon/reset' });
+      expect(dispatch).toHaveBeenCalledWith({ type: 'Coupon/reset' });
       expect(dispatch).toHaveBeenCalledWith({ type: 'order/reset' });
     });
   });
@@ -302,17 +303,18 @@ describe('BasketPage', () => {
     });
   });
 
-  it('reads saved coupon/discount from localStorage and dispatches setCoupon/setDiscount', async () => {
+  it('reads saved Coupon/discount from localStorage and dispatches setCoupon/setDiscount', async () => {
     localStorage.setItem('appliedCoupon', 'camera-444');
-    localStorage.setItem('couponDiscount', '15');
+    localStorage.setItem('CouponDiscount', '15');
 
-    setStore({ coupon: 'camera-444', discount: 15 });
+    setStore({ Coupon: 'camera-444', discount: 15 });
 
     render(<BasketPage />);
 
     await waitFor(() => {
-      expect(dispatch).toHaveBeenCalledWith({ type: 'coupon/setCoupon', payload: 'camera-444' });
-      expect(dispatch).toHaveBeenCalledWith({ type: 'coupon/setDiscount', payload: 15 });
+      expect(dispatch).toHaveBeenCalledWith({ type: 'Coupon/setCoupon', payload: 'camera-444' });
+      expect(dispatch).toHaveBeenCalledWith({ type: 'Coupon/setDiscount', payload: 15 });
     });
   });
 });
+

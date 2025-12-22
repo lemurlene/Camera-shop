@@ -32,7 +32,7 @@ export const NAV_ITEMS: NavItemType[] = [
     exact: true,
   },
   {
-    key: 'delivery',
+    key: 'about',
     label: 'О компании',
     to: AppRoute.About,
     exact: true,

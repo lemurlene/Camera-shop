@@ -157,11 +157,9 @@ describe('FormReview', () => {
 
     const form = screen.getByTestId('review-form');
 
-    // рейтинг
     const rating = screen.getByTestId(`rating-${REVIEW_RULES.rating.max}`);
     fireEvent.click(rating);
 
-    // поля
     fireEvent.change(getInput(form, 'user-name'), {
       target: { name: 'user-name', value: makeStr(REVIEW_RULES.name.min) },
     });

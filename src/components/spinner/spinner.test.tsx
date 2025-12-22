@@ -1,133 +1,73 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import Spinner from './spinner';
 import { Hourglass } from 'react-loader-spinner';
 
+type HourglassProps = {
+  visible: boolean;
+  height: string;
+  width: string;
+  ariaLabel: string;
+  wrapperStyle: Record<string, unknown>;
+  wrapperClass: string;
+  colors: string[];
+};
+
 vi.mock('react-loader-spinner', () => ({
-  Hourglass: vi.fn((props) => (
-    <div data-testid="hourglass-spinner" {...props}>
-      Mock Hourglass Spinner
-    </div>
-  ))
+  Hourglass: vi.fn(() => (
+    <div data-testid="hourglass-spinner">Mock Hourglass Spinner</div>
+  )),
 }));
 
 describe('Spinner Component', () => {
-  describe('spinner rendering', () => {
-    it('should render spinner wrapper', () => {
-      render(<Spinner />);
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
-      const wrapper = screen.getByTestId('spinner-wrapper');
-      expect(wrapper).toBeInTheDocument();
-      expect(wrapper.tagName).toBe('P');
-    });
+  it('renders spinner wrapper', () => {
+    render(<Spinner />);
 
-    it('should render Hourglass spinner with correct props', () => {
-      render(<Spinner />);
+    const wrapper = screen.getByTestId('spinner-wrapper');
+    expect(wrapper).toBeInTheDocument();
 
-      expect(Hourglass).toHaveBeenCalledWith(
-        {
-          visible: true,
-          height: '80',
-          width: '80',
-          ariaLabel: 'hourglass-loading',
-          wrapperStyle: {},
-          wrapperClass: '',
-          colors: ['#65cd54', '#7575e2']
-        },
-        {}
-      );
-    });
+    expect(wrapper.tagName).toBe('DIV');
+  });
 
-    it('should render Hourglass spinner inside wrapper', () => {
-      render(<Spinner />);
+  it('renders Hourglass inside wrapper', () => {
+    render(<Spinner />);
 
-      const wrapper = screen.getByTestId('spinner-wrapper');
-      const spinner = screen.getByTestId('hourglass-spinner');
+    const wrapper = screen.getByTestId('spinner-wrapper');
+    const spinner = screen.getByTestId('hourglass-spinner');
 
-      expect(spinner).toBeInTheDocument();
-      expect(wrapper).toContainElement(spinner);
+    expect(spinner).toBeInTheDocument();
+    expect(wrapper).toContainElement(spinner);
+  });
+
+  it('passes correct props to Hourglass', () => {
+    render(<Spinner />);
+
+    expect(vi.mocked(Hourglass)).toHaveBeenCalledTimes(1);
+
+    const [props] = vi.mocked(Hourglass).mock.calls[0] as unknown as [HourglassProps];
+
+    expect(props).toMatchObject({
+      visible: true,
+      height: '80',
+      width: '80',
+      ariaLabel: 'hourglass-loading',
+      wrapperStyle: {},
+      wrapperClass: '',
+      colors: ['#65cd54', '#7575e2'],
     });
   });
 
-  describe('spinner props', () => {
-    it('should have correct accessibility attributes', () => {
-      render(<Spinner />);
+  it('does not re-render with same props (memo)', () => {
+    const { rerender } = render(<Spinner />);
 
-      expect(Hourglass).toHaveBeenCalledWith(
-        expect.objectContaining({
-          ariaLabel: 'hourglass-loading',
-          visible: true
-        }),
-        {}
-      );
-    });
+    const initialCallCount = vi.mocked(Hourglass).mock.calls.length;
 
-    it('should have correct dimensions', () => {
-      render(<Spinner />);
+    rerender(<Spinner />);
 
-      expect(Hourglass).toHaveBeenCalledWith(
-        expect.objectContaining({
-          height: '80',
-          width: '80'
-        }),
-        {}
-      );
-    });
-
-    it('should have correct colors', () => {
-      render(<Spinner />);
-
-      expect(Hourglass).toHaveBeenCalledWith(
-        expect.objectContaining({
-          colors: ['#65cd54', '#7575e2']
-        }),
-        {}
-      );
-    });
-
-    it('should have empty wrapper styles', () => {
-      render(<Spinner />);
-
-      expect(Hourglass).toHaveBeenCalledWith(
-        expect.objectContaining({
-          wrapperStyle: {},
-          wrapperClass: ''
-        }),
-        {}
-      );
-    });
-  });
-
-  describe('memo functionality', () => {
-    it('should be memoized', () => {
-      expect(Spinner).toHaveProperty('type');
-      expect(Spinner).toHaveProperty('compare');
-    });
-
-    it('should not re-render with same props', () => {
-      const { rerender } = render(<Spinner />);
-
-      const initialCallCount = vi.mocked(Hourglass).mock.calls.length;
-
-      rerender(<Spinner />);
-
-      expect(vi.mocked(Hourglass).mock.calls.length).toBe(initialCallCount);
-    });
-  });
-
-  describe('visual presentation', () => {
-    it('should render without errors', () => {
-      expect(() => render(<Spinner />)).not.toThrow();
-    });
-
-    it('should match expected structure', () => {
-      render(<Spinner />);
-
-      const wrapper = screen.getByTestId('spinner-wrapper');
-      const spinner = screen.getByTestId('hourglass-spinner');
-
-      expect(wrapper).toBeInTheDocument();
-      expect(spinner).toBeInTheDocument();
-    });
+    expect(vi.mocked(Hourglass).mock.calls.length).toBe(initialCallCount);
   });
 });

@@ -3,6 +3,9 @@ import { BrowserRouter } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { FullOfferType } from '../../const/type';
 import { AppRoute } from '../../const/enum';
+import { mockOffers } from '../../mocks/mock-offers';
+
+const mockCard = mockOffers[0];
 
 type CardProps = {
   card: FullOfferType;
@@ -66,23 +69,6 @@ function TestCard({ card, isSlide = false }: CardProps): JSX.Element {
     </div>
   );
 }
-
-const mockCard: FullOfferType = {
-  'id': 1,
-  'name': 'Ретрокамера Dus Auge lV',
-  'vendorCode': 'DA4IU67AD5',
-  'type': 'Коллекционная',
-  'category': 'Видеокамера',
-  'description': 'Немецкий концерн BRW разработал видеокамеру Das Auge IV в начале 80-х годов, однако она до сих пор пользуется популярностью среди коллекционеров и яростных почитателей старинной техники. Вы тоже можете прикоснуться к волшебству аналоговой съёмки, заказав этот чудо-аппарат. Кто знает, может с Das Auge IV начнётся ваш путь к наградам всех престижных кинофестивалей.',
-  'previewImg': 'img/content/das-auge.jpg',
-  'level': 'Любительский',
-  'price': 73450,
-  'previewImg2x': 'img/content/das-auge@2x.jpg',
-  'previewImgWebp': 'img/content/das-auge.webp',
-  'previewImgWebp2x': 'img/content/das-auge@2x.webp',
-  'rating': 3,
-  'reviewCount': 15
-};
 
 const renderWithRouter = (component: React.ReactElement) => render(
   <BrowserRouter>
